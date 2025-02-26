@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 
+//todo: add a database class to store the database
 /** This class implements the DB server. */
 public class DBServer {
 
@@ -42,8 +43,8 @@ public class DBServer {
     * <p>This method handles all incoming DB commands and carries out the required actions.
     */
     public String handleCommand(String command) {
-        // TODO implement your server logic here
-        return "";
+        basicTokeniser.setup(command);
+        return "Finished";
     }
 
     //  === Methods below handle networking aspects of the project - you will not need to change these ! ===
