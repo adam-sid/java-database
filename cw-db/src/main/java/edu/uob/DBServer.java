@@ -43,8 +43,8 @@ public class DBServer {
     * <p>This method handles all incoming DB commands and carries out the required actions.
     */
     public String handleCommand(String command) {
-        basicTokeniser.setup(command);
-        return "Finished";
+        //BasicTokeniser.setup(command)
+        return "";
     }
 
     //  === Methods below handle networking aspects of the project - you will not need to change these ! ===

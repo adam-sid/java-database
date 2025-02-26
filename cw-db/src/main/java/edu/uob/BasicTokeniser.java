@@ -2,7 +2,7 @@ package edu.uob;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class basicTokeniser {
+public class BasicTokeniser {
 
     static String[] specialCharacters = {"(",")",",",";"};
     static ArrayList<String> tokens = new ArrayList<String>();
