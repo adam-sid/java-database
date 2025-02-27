@@ -7,15 +7,14 @@ public class Table {
     static int tableCount = 1;
 
     public void createTable(String tableName) {
+        /*
         HashMap<String, Integer> newTable = new HashMap<>();
         newTable.put(tableName, tableCount);
         tableCount++;
+         */
     }
 
-    public void makeRows(int numRows) {
+    public void makeRow(int rowID, String rowData) {
 
-        for (int i = 0; i < numRows; i++) {
-            Row
-        }
     }
 }

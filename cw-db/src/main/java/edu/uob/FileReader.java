@@ -4,6 +4,8 @@ import java.io.*;
 
 public class FileReader
 {
+    static Table newTable = new Table();
+    static int rowCount = 0;
     public static void readFile(String fileName) {
         String lineOutput;
         File file = new File(fileName);
@@ -11,7 +13,8 @@ public class FileReader
             java.io.FileReader reader = new java.io.FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(reader);
             while((lineOutput = bufferedReader.readLine()) != null) {
-                System.out.println(lineOutput);
+                newTable.makeRow(rowCount, lineOutput);
+                rowCount++;
             }
             bufferedReader.close();
         }
