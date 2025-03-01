@@ -31,7 +31,14 @@ public class TableTest {
     public void tableLoadsRowsFromFile() throws IOException {
         Table table = new Table( ".." + File.separator + "databases","Test", "tableWithRows");
         assertEquals("tableWithRows", table.getTableName());
-
         assertEquals(3, table.getRows().size());
+        List<String> secondRow = table.getSpecificRow(2).getRowData();
+        assertEquals("Harry", secondRow.get(1));
+    }
+
+    @Test
+    public void tableWritesToFile() throws IOException {
+        Table table = new Table( ".." + File.separator + "databases","Test", "tableWithRows");
+        table.writeToFile("test.txt");
     }
 }
