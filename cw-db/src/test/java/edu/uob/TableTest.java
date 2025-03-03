@@ -37,6 +37,7 @@ public class TableTest {
     }
 
     @Test
+    //TODO get this working - need to figure a good way to pass filename to the write function
     public void tableWritesToFile() throws IOException {
         Table table = new Table( ".." + File.separator + "databases","Test", "tableWithRows");
         table.writeToFile("test.txt");
