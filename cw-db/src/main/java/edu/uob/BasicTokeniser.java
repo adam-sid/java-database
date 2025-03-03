@@ -5,10 +5,10 @@ import java.util.Arrays;
 public class BasicTokeniser {
 
     static String[] specialCharacters = {"(",")",",",";"};
-    static ArrayList<String> tokens = new ArrayList<String>();
 
-    static void setup(String query)
+    static ArrayList<String> setup(String query)
     {
+        ArrayList<String> tokens = new ArrayList<String>();
         // Split the query on single quotes (to separate out query text from string literals)
         String[] fragments = query.split("'");
         for (int i = 0; i<fragments.length; i++) {
@@ -22,8 +22,7 @@ public class BasicTokeniser {
                 tokens.addAll(Arrays.asList(nextBatchOfTokens));
             }
         }
-        // Finally, loop through the result array list, printing out each token a line at a time
-        for (int i = 0; i < tokens.size(); i++) System.out.println(tokens.get(i));
+        return tokens;
     }
 
     static String[] tokenise(String input)

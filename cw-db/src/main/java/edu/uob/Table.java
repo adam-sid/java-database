@@ -11,6 +11,8 @@ public class Table {
     private final List<String> columns;
 
     private final Map<Integer, Row> rows;
+    //TODO: I get warnings about how I access this fileName variable in TableTest
+    private static String fileName;
 
     public Table (String tableName, List<String> columnNames) {
         this.tableName = tableName;
@@ -22,13 +24,19 @@ public class Table {
     public Table (String databaseHome, String database, String tableName) throws IOException {
         //call other constructor
         this(tableName, readColumnNames(setFileName(databaseHome, database, tableName)));
-        this.readRows(setFileName(databaseHome, database, tableName));
+        fileName = setFileName(databaseHome, database, tableName);
+        this.readRows(fileName);
       }
 
     private static String setFileName(String databaseHome, String database, String tableName) {
         return databaseHome + File.separator + database + File.separator + tableName + ".tab";
     }
 
+    public static String getFileName() {
+        return fileName;
+    }
+
+    //TODO: column names shouldn't be converted to lower case! (source task 3 persistent storage)
     private static List<String> readColumnNames(String fileName) throws IOException {
         File file = new File(fileName);
         try(java.io.FileReader reader = new java.io.FileReader(file);
@@ -73,6 +81,7 @@ public class Table {
         return rows;
     }
 
+    //TODO: is this method too simple? Maybe remove
     public Row getSpecificRow(Integer rowID) {
         return rows.get(rowID);
     }
@@ -91,9 +100,15 @@ public class Table {
             String line = String.join("\t", columns);
             bufferedWriter.write(line);
             while(lineCount <= rows.size()) {
+                bufferedWriter.newLine();
                 line = rowToString(getSpecificRow(lineCount++));
                 bufferedWriter.write(line);
             }
         }
+    }
+
+    public void modifyTableData(Integer rowID, Integer columnIndex, String value) {
+        Row row = getSpecificRow(rowID);
+        row.modifyElement(columnIndex, value);
     }
 }

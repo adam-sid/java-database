@@ -13,4 +13,8 @@ public class Row {
    public List<String> getRowData() {
         return rowData;
    }
+
+   public void modifyElement(Integer index, String value) {
+        rowData.set(index, value);
+   }
 }

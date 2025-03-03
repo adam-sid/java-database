@@ -3,7 +3,6 @@ package edu.uob;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class TableTest {
         assertEquals(tableName, table.getTableName());
         assertEquals(columnNames, table.getColumns());
     }
-    //TODO modify this before submission - no pre-existing files!
+    //TODO modify/remove these tests before submission - no pre-existing files!
     @Test
     public void tableDerivesColumnsFromFile() throws IOException {
         Table table = new Table( ".." + File.separator + "databases","Test", "tableWithNoRows");
@@ -37,9 +36,15 @@ public class TableTest {
     }
 
     @Test
-    //TODO get this working - need to figure a good way to pass filename to the write function
     public void tableWritesToFile() throws IOException {
-        Table table = new Table( ".." + File.separator + "databases","Test", "tableWithRows");
-        table.writeToFile("test.txt");
+        String value = "Tim";
+        int row = 3, column = 1;
+        Table table1 = new Table( ".." + File.separator + "databases","Test", "tableWithRows");
+        table1.modifyTableData(row, column, value);
+        table1.writeToFile(table1.getFileName());
+
+        Table table2 = new Table( ".." + File.separator + "databases","Test", "tableWithRows");
+        List<String> secondRow = table2.getSpecificRow(row).getRowData();
+        assertEquals(value, secondRow.get(column));
     }
 }

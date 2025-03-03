@@ -10,6 +10,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Paths;
 import java.nio.file.Files;
+import java.util.ArrayList;
 
 //todo: add a database class to store the database
 /** This class implements the DB server. */
@@ -28,7 +29,6 @@ public class DBServer {
     */
     public DBServer() {
         storageFolderPath = Paths.get("databases").toAbsolutePath().toString();
-        FileReader.readFile("people.tab");
         try {
             // Create the database storage folder if it doesn't already exist !
             Files.createDirectories(Paths.get(storageFolderPath));
@@ -44,7 +44,8 @@ public class DBServer {
     * <p>This method handles all incoming DB commands and carries out the required actions.
     */
     public String handleCommand(String command) {
-        //BasicTokeniser.setup(command)
+        Command tokenisedCommand = new Command(command);
+        Parser.parse(tokenisedCommand.getCommand());
         return "";
     }
 
