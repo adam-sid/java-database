@@ -24,6 +24,9 @@ public class Parser {
             case "CREATE":
                 tokenIndex.incrementAndGet();
                 return parseCreate(tokenArr, tokenIndex);
+            case "USE":
+                tokenIndex.incrementAndGet();
+                return parseUse(tokenArr, tokenIndex);
             default:
                 throw new RuntimeException("Unexpected token: " + nextToken);
         }
@@ -39,6 +42,12 @@ public class Parser {
             default:
                 throw new RuntimeException("Unexpected token: " + nextToken);
         }
+    }
+
+    private Command parseUse(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        String rawDatabaseName = parsePlainText(tokenArr, tokenIndex);
+        String databaseName = rawDatabaseName.trim();
+        return new UseDatabaseCommand(databaseContext, databaseName);
     }
 
     private Command parseCreateDatabase(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {

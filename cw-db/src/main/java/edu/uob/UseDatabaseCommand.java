@@ -1,6 +1,7 @@
 package edu.uob;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class UseDatabaseCommand implements Command {
@@ -19,9 +20,14 @@ public class UseDatabaseCommand implements Command {
     }
 
     @Override
+    //TODO check if database exists
     public List<String> execute() {
-        String databaseName = getDatabaseName();
-        databaseContext = new DatabaseContext(databaseName);
+        databaseContext.setDatabaseName(databaseName);
+        File targetFile = new File(Paths.get(databaseContext.getDatabasesHome() +
+                File.separator + databaseName ).toAbsolutePath().toString());
+        if(!targetFile.exists() || !targetFile.isDirectory()) {
+            throw new RuntimeException("No such database: " + databaseName);
+        }
         return List.of();
     }
 }
