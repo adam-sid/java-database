@@ -44,8 +44,8 @@ public class DBServer {
     * <p>This method handles all incoming DB commands and carries out the required actions.
     */
     public String handleCommand(String command) {
-        Command tokenisedCommand = new Command(command);
-        Parser.parse(tokenisedCommand.getCommand());
+        //Command tokenisedCommand = new Command(command);
+        //Parser.parse(tokenisedCommand.getCommand());
         return "";
     }
 

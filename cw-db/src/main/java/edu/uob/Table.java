@@ -18,7 +18,7 @@ public class Table {
         this.tableName = tableName;
         this.columns = columnNames;
         //create empty map of rows
-        this.rows = new HashMap<>();
+        this.rows = new TreeMap<>();
     }
 
     public Table (String databaseHome, String database, String tableName) throws IOException {
@@ -36,14 +36,12 @@ public class Table {
         return fileName;
     }
 
-    //TODO: column names shouldn't be converted to lower case! (source task 3 persistent storage)
     private static List<String> readColumnNames(String fileName) throws IOException {
         File file = new File(fileName);
         try(java.io.FileReader reader = new java.io.FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(reader)) {
 
             return Stream.of(bufferedReader.readLine().split("\t"))
-                    .map(x -> x.toLowerCase(Locale.getDefault()))
                     .map(String::trim)
                     .collect(Collectors.toList());
         }
@@ -58,15 +56,10 @@ public class Table {
             String line;
             while((line = bufferedReader.readLine()) != null) {
                 List<String> rowData = Arrays.asList(line.split("\t"));
-                Integer rowID = rowIDFromData(rowData);
                 Row row = new Row(rowData);
-                rows.put(rowID, row);
+                rows.put(row.getId(), row);
             }
         }
-    }
-
-    private static Integer rowIDFromData(List<String> rowData) throws NumberFormatException {
-        return Integer.parseInt(rowData.get(0));
     }
 
     public String getTableName() {
@@ -81,8 +74,7 @@ public class Table {
         return rows;
     }
 
-    //TODO: is this method too simple? Maybe remove
-    public Row getSpecificRow(Integer rowID) {
+    public Row getRow(int rowID) {
         return rows.get(rowID);
     }
 
@@ -92,23 +84,27 @@ public class Table {
     }
 
     public void writeToFile(String fileName) throws IOException {
-        int lineCount = 1;
         File file = new File(fileName);
         try(java.io.FileWriter writer = new java.io.FileWriter(file);
             BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
             //first write column attributes to first line
-            String line = String.join("\t", columns);
-            bufferedWriter.write(line);
-            while(lineCount <= rows.size()) {
-                bufferedWriter.newLine();
-                line = rowToString(getSpecificRow(lineCount++));
-                bufferedWriter.write(line);
-            }
+            String headerLine = String.join("\t", columns);
+            bufferedWriter.write(headerLine);
+            bufferedWriter.newLine();
+            rows.values().forEach(row -> {
+                try {
+                    String rowLine = rowToString(row);
+                    bufferedWriter.write(rowLine);
+                    bufferedWriter.newLine();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         }
     }
 
-    public void modifyTableData(Integer rowID, Integer columnIndex, String value) {
-        Row row = getSpecificRow(rowID);
+    public void modifyTableData(int rowID, Integer columnIndex, String value) {
+        Row row = getRow(rowID);
         row.modifyElement(columnIndex, value);
     }
 }

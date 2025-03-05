@@ -3,7 +3,7 @@ package edu.uob;
 import java.util.ArrayList;
 
 public class Parser {
-
+/*
     //TODO: CREATE TABLE marks (name, mark, pass);
     static void parse(ArrayList<String> commandArr) {
        isCommand(commandArr);
@@ -25,4 +25,6 @@ public class Parser {
     public static boolean () {
 
     }
+
+     */
 }
