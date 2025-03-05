@@ -1,20 +1,10 @@
 package edu.uob;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class Command {
+public interface Command {
 
-    private final ArrayList<String> commandArr;
+     List<String> execute();
 
-    public Command(String command) {
-        this.commandArr = BasicTokeniser.setup(command);
-    }
-
-    public ArrayList<String> getCommand () {
-        return commandArr;
-    }
-
-    public String getToken (int tokenIndex) {
-        return commandArr.get(tokenIndex);
-    }
 }

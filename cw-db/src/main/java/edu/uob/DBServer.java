@@ -11,11 +11,13 @@ import java.net.Socket;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
 
-//todo: add a database class to store the database
 /** This class implements the DB server. */
 public class DBServer {
 
+    private final Parser parser;
+    private final DatabaseContext databaseContext;
     private static final char END_OF_TRANSMISSION = 4;
     private String storageFolderPath;
 
@@ -28,7 +30,9 @@ public class DBServer {
     * KEEP this signature otherwise we won't be able to mark your submission correctly.
     */
     public DBServer() {
-        storageFolderPath = Paths.get("databases").toAbsolutePath().toString();
+        storageFolderPath = Paths.get("cw-db" + File.separator + "databases").toAbsolutePath().toString();
+        this.databaseContext = new DatabaseContext(storageFolderPath);
+        this.parser = new Parser(databaseContext);
         try {
             // Create the database storage folder if it doesn't already exist !
             Files.createDirectories(Paths.get(storageFolderPath));
@@ -44,9 +48,24 @@ public class DBServer {
     * <p>This method handles all incoming DB commands and carries out the required actions.
     */
     public String handleCommand(String command) {
-        //Command tokenisedCommand = new Command(command);
-        //Parser.parse(tokenisedCommand.getCommand());
-        return "";
+        ArrayList<String> message = new ArrayList<>();
+
+        try {
+            List<String> response = parser.parse(BasicTokeniser.setup(command)).execute();
+            message.add("[OK]");
+            message.addAll(response);
+        } catch (Exception e) {
+            message.add("[ERROR]");
+            message.add(e.getMessage());
+        }
+        StringBuilder output = new StringBuilder();
+
+        message.forEach( line -> {
+            output.append(line);
+            output.append(System.lineSeparator());
+        });
+
+        return output.toString();
     }
 
     //  === Methods below handle networking aspects of the project - you will not need to change these ! ===

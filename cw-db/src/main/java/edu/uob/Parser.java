@@ -1,30 +1,69 @@
 package edu.uob;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Parser {
-/*
-    //TODO: CREATE TABLE marks (name, mark, pass);
-    static void parse(ArrayList<String> commandArr) {
-       isCommand(commandArr);
+
+    private final DatabaseContext databaseContext;
+
+    public Parser(DatabaseContext databaseContext) {
+        this.databaseContext = databaseContext;
     }
 
-    public static boolean isCommand(ArrayList<String> commandArr) {
-        //check if there is a semicolon at the end
-        //if true call isCommandType on
-            //return value of isCommandType
-        //else return false
+    public Command parse(ArrayList<String> tokenArr) {
+        AtomicInteger tokenIndex = new AtomicInteger(0);
+        Command command = parseCommand(tokenArr, tokenIndex);
+        parseSemiColon(tokenArr, tokenIndex);
+        return command;
     }
 
-    public static boolean isCommandType(String command) {
-        //switch case statement with these possible options
-        //<Use> | <Create> | <Drop> | <Alter> | <Insert> | <Select> | <Update> | <Delete> | <Join>
-        //if doesn't fit any of these then return back to isCommand as false
+    private Command parseCommand(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        String nextToken = tokenArr.get(tokenIndex.get());
+        switch (nextToken) {
+            case "CREATE":
+                tokenIndex.incrementAndGet();
+                return parseCreate(tokenArr, tokenIndex);
+            default:
+                throw new RuntimeException("Unexpected token: " + nextToken);
+        }
+
     }
 
-    public static boolean () {
-
+    private Command parseCreate(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        String nextToken = tokenArr.get(tokenIndex.get());
+        switch (nextToken) {
+            case "DATABASE":
+                tokenIndex.incrementAndGet();
+                return parseCreateDatabase(tokenArr, tokenIndex);
+            default:
+                throw new RuntimeException("Unexpected token: " + nextToken);
+        }
     }
 
-     */
+    private Command parseCreateDatabase(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        String rawDatabaseName = parsePlainText(tokenArr, tokenIndex);
+        String databaseName = rawDatabaseName.trim();
+        return new CreateDatabaseCommand(databaseContext, databaseName);
+    }
+
+    private static String parsePlainText(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        String plainText = tokenArr.get(tokenIndex.getAndIncrement());
+        for (int i = 0 ; i != plainText.length() ; i++) {
+            char c = plainText.charAt(i);
+            boolean valid = Character.isAlphabetic(c) || Character.isDigit(c);
+            if (!valid) {
+                throw new RuntimeException("Unexpected character: " + c);
+            }
+        }
+        return plainText;
+    }
+
+    private void parseSemiColon(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        String nextToken = tokenArr.get(tokenIndex.get());
+        if (!nextToken.equals(";")) {
+            throw new RuntimeException("Semi-colon expected at position " + tokenIndex.get());
+        }
+        tokenIndex.incrementAndGet();
+    }
 }

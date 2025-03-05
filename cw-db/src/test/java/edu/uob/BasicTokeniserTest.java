@@ -1,0 +1,16 @@
+package edu.uob;
+
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class BasicTokeniserTest {
+    @Test
+    public void tokenisation() {
+        ArrayList<String> tokens = BasicTokeniser.setup("Hello world (\"from Mars!\")");
+        assertEquals(List.of("Hello", "world", "(", "\"from, Mars!\"",")").toString(), tokens.toString());
+    }
+}

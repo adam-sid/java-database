@@ -11,8 +11,8 @@ public class Table {
     private final List<String> columns;
 
     private final Map<Integer, Row> rows;
-    //TODO: I get warnings about how I access this fileName variable in TableTest
-    private static String fileName;
+
+    private String fileName;
 
     public Table (String tableName, List<String> columnNames) {
         this.tableName = tableName;
@@ -32,7 +32,7 @@ public class Table {
         return databaseHome + File.separator + database + File.separator + tableName + ".tab";
     }
 
-    public static String getFileName() {
+    public String getFileName() {
         return fileName;
     }
 
