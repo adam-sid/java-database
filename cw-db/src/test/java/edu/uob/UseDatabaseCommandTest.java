@@ -2,7 +2,10 @@ package edu.uob;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class UseDatabaseCommandTest {
@@ -19,11 +22,22 @@ public class UseDatabaseCommandTest {
     @Test
     public void testExecute() {
         String databaseName = "UseDatabaseCommandTest";
-        DatabaseContext databaseContext = new DatabaseContext("..");
+        File databaseFolder = new File(".." + File.separator + "testDatabases" + File.separator + databaseName);
+        databaseFolder.mkdirs();
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName(databaseName);
         UseDatabaseCommand command = new UseDatabaseCommand(databaseContext, databaseName);
         command.execute();
         assertEquals("UseDatabaseCommandTest", databaseContext.getDatabaseName());
+        databaseFolder.delete();
     }
 
-    //TODO add test for when no database exists
+    @Test
+    public void testExecuteDoesNotExist() {
+        String databaseName = "DoesNotExist";
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName(databaseName);
+        UseDatabaseCommand command = new UseDatabaseCommand(databaseContext, databaseName);
+        assertThrows(RuntimeException.class, command::execute);
+    }
 }

@@ -11,6 +11,7 @@ public class Parser {
         this.databaseContext = databaseContext;
     }
 
+    //Position in token array is stored as an AtomicInteger type so it can persist across method calls
     public Command parse(ArrayList<String> tokenArr) {
         AtomicInteger tokenIndex = new AtomicInteger(0);
         Command command = parseCommand(tokenArr, tokenIndex);
@@ -39,9 +40,44 @@ public class Parser {
             case "DATABASE":
                 tokenIndex.incrementAndGet();
                 return parseCreateDatabase(tokenArr, tokenIndex);
+            case "TABLE":
+                tokenIndex.incrementAndGet();
+                return parseCreateTable(tokenArr, tokenIndex);
             default:
                 throw new RuntimeException("Unexpected token: " + nextToken);
         }
+    }
+
+    private Command parseCreateTable(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        String rawTableName = parsePlainText(tokenArr, tokenIndex);
+        String tableName = rawTableName.trim();
+        ArrayList<String> attributeList = parseAttributeList(tokenArr, tokenIndex);
+        return new CreateTableCommand(databaseContext, databaseContext.getDatabaseName(), tableName, attributeList);
+    }
+
+    private ArrayList<String> parseAttributeList(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        if (!parseChar(tokenArr, tokenIndex, "(")) {
+            return null;
+        }
+        tokenIndex.incrementAndGet();
+        ArrayList<String> attributeList = new ArrayList<>();
+        while (tokenIndex.get() < tokenArr.size() && !tokenArr.get(tokenIndex.get()).equals(")")) {
+            String newAttribute = parsePlainText(tokenArr, tokenIndex);
+            attributeList.add(newAttribute);
+            tokenIndex.incrementAndGet();
+            if (!parseChar(tokenArr, tokenIndex, ",") || !parseChar(tokenArr, tokenIndex, ")")) {
+                throw new RuntimeException("Expected ')' or ',' but got " + tokenIndex.get());
+            }
+        }
+        if (parseChar(tokenArr, tokenIndex, ")")) {
+            return attributeList;
+        } else
+            throw new RuntimeException("Expected ')' but got " + tokenIndex.get());
+    }
+    //note this function DOES NOT increment tokenIndex - must manually increment after method call
+    private boolean parseChar(ArrayList<String> tokenArr, AtomicInteger tokenIndex, String expectedChar) {
+        String actualChar = tokenArr.get(tokenIndex.get()).trim();
+        return actualChar.equals(expectedChar);
     }
 
     private Command parseUse(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
@@ -67,8 +103,11 @@ public class Parser {
         }
         return plainText;
     }
-
+    //TODO: can I shorten this function?
     private void parseSemiColon(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        if (tokenIndex.get() >= tokenArr.size()) {
+            throw new RuntimeException("Reached end of input but no semi-colon found");
+        }
         String nextToken = tokenArr.get(tokenIndex.get());
         if (!nextToken.equals(";")) {
             throw new RuntimeException("Semi-colon expected at position " + tokenIndex.get());

@@ -1,5 +1,7 @@
 package edu.uob;
 
+import java.io.File;
+
 public class DatabaseContext {
 
     private final String databasesHome;
@@ -20,5 +22,9 @@ public class DatabaseContext {
 
     public String getDatabaseName() {
         return databaseName;
+    }
+
+    public String getFullPath() {
+        return databasesHome + File.separator + databaseName;
     }
 }

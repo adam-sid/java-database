@@ -15,15 +15,18 @@ public class CreateDatabaseCommandTest {
     }
 
     @Test
-    public void testExecuteCommand() {
+    public void testExecuteAndDeleteCommand() {
         String databaseName = "CreateDatabaseCommandTest";
-        File databaseFolder = new File("databases" + File.separator + databaseName);
+        File databaseFolder = new File(".." + File.separator + "testDatabases" + File.separator + databaseName);
         databaseFolder.delete();
         assertFalse(databaseFolder.exists());
-        DatabaseContext databaseContext = new DatabaseContext("databases");
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         CreateDatabaseCommand command = new CreateDatabaseCommand(databaseContext, databaseName);
         command.execute();
         assertTrue(databaseFolder.exists());
         assertTrue(databaseFolder.isDirectory());
+        command.deleteDatabase();
+        assertFalse(databaseFolder.exists());
+        assertFalse(databaseFolder.isDirectory());
     }
 }

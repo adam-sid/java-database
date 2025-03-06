@@ -28,4 +28,16 @@ public class ParserTest {
         Command command = parser.parse(BasicTokeniser.setup("USE markbook;"));
         assertTrue(command instanceof UseDatabaseCommand);
     }
+
+    @Test
+    public void parseUseNoSemiColon() {
+        DatabaseContext databaseContext = new DatabaseContext("..");
+        Parser parser = new Parser(databaseContext);
+        assertThrows(RuntimeException.class, () -> parser.parse(BasicTokeniser.setup("USE markbook")));
+    }
+
+    @Test
+    public void parseCreateTable() {
+
+    }
 }

@@ -17,7 +17,13 @@ public class CreateDatabaseCommand implements Command{
     public String getDatabaseName() {
         return databaseName;
     }
-
+    //TODO throw an io exception
+    public void deleteDatabase() {
+        File databasesHomeFolder = new File(databaseContext.getDatabasesHome());
+        File file = new File(databasesHomeFolder, databaseName);
+        file.delete();
+    }
+    //TODO throw an io exception
     @Override
     public List<String> execute() {
         File databasesHomeFolder = new File(databaseContext.getDatabasesHome());
