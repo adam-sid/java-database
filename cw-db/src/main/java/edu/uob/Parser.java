@@ -11,7 +11,7 @@ public class Parser {
         this.databaseContext = databaseContext;
     }
 
-    //Position in token array is stored as an AtomicInteger type so it can persist across method calls
+    //Position in token array is stored as an AtomicInteger type so it persists across method calls
     public Command parse(ArrayList<String> tokenArr) {
         AtomicInteger tokenIndex = new AtomicInteger(0);
         Command command = parseCommand(tokenArr, tokenIndex);
@@ -28,10 +28,34 @@ public class Parser {
             case "USE":
                 tokenIndex.incrementAndGet();
                 return parseUse(tokenArr, tokenIndex);
+            case "DROP":
+                tokenIndex.incrementAndGet();
+                return parseDrop(tokenArr, tokenIndex);
             default:
                 throw new RuntimeException("Unexpected token: " + nextToken);
         }
+    }
 
+    private Command parseDrop(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        String nextToken = tokenArr.get(tokenIndex.get());
+        switch (nextToken) {
+            case "DATABASE":
+                tokenIndex.incrementAndGet();
+                return parseDropDatabase(tokenArr, tokenIndex);
+            case "TABLE":
+                tokenIndex.incrementAndGet();
+                return parseDropTable(tokenArr, tokenIndex);
+            default:
+                throw new RuntimeException("Unexpected token: " + nextToken);
+        }
+    }
+
+    private Command parseDropTable(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        return null;
+    }
+
+    private Command parseDropDatabase(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        return null;
     }
 
     private Command parseCreate(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
@@ -59,17 +83,17 @@ public class Parser {
         if (!parseChar(tokenArr, tokenIndex, "(")) {
             return null;
         }
-        tokenIndex.incrementAndGet();
         ArrayList<String> attributeList = new ArrayList<>();
         while (tokenIndex.get() < tokenArr.size() && !tokenArr.get(tokenIndex.get()).equals(")")) {
+            tokenIndex.incrementAndGet();
             String newAttribute = parsePlainText(tokenArr, tokenIndex);
             attributeList.add(newAttribute);
-            tokenIndex.incrementAndGet();
-            if (!parseChar(tokenArr, tokenIndex, ",") || !parseChar(tokenArr, tokenIndex, ")")) {
-                throw new RuntimeException("Expected ')' or ',' but got " + tokenIndex.get());
+            if (!parseChar(tokenArr, tokenIndex, ",") && !parseChar(tokenArr, tokenIndex, ")")) {
+                throw new RuntimeException("Expected ')' or ',' but got " + tokenArr.get(tokenIndex.get()));
             }
         }
         if (parseChar(tokenArr, tokenIndex, ")")) {
+            tokenIndex.incrementAndGet();
             return attributeList;
         } else
             throw new RuntimeException("Expected ')' but got " + tokenIndex.get());

@@ -38,6 +38,9 @@ public class ParserTest {
 
     @Test
     public void parseCreateTable() {
-
+        DatabaseContext databaseContext = new DatabaseContext("..");
+        Parser parser = new Parser(databaseContext);
+        Command command = parser.parse(BasicTokeniser.setup("CREATE TABLE newTable;"));
+        assertTrue(command instanceof CreateTableCommand);
     }
 }

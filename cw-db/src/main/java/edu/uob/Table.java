@@ -12,24 +12,31 @@ public class Table {
 
     private final Map<Integer, Row> rows;
 
+    private final DatabaseContext databaseContext;
+
+    private final String databaseName;
+
     private String fileName;
 
-    public Table (String tableName, List<String> columnNames) {
+    public Table (DatabaseContext databaseContext, String databaseName,
+                  String tableName, List<String> columnNames) {
+        this.databaseContext = databaseContext;
+        this.databaseName = databaseName;
         this.tableName = tableName;
         this.columns = columnNames;
         //create empty map of rows
         this.rows = new TreeMap<>();
     }
 
-    public Table (String databaseHome, String database, String tableName) throws IOException {
+    public Table (DatabaseContext databaseContext, String databaseName, String tableName) throws IOException {
         //call other constructor
-        this(tableName, readColumnNames(setFileName(databaseHome, database, tableName)));
-        fileName = setFileName(databaseHome, database, tableName);
+        this(databaseContext, databaseName, tableName, readColumnNames(setFileName(databaseContext, databaseName, tableName)));
+        fileName = setFileName(databaseContext, databaseName, tableName);
         this.readRows(fileName);
-      }
+    }
 
-    private static String setFileName(String databaseHome, String database, String tableName) {
-        return databaseHome + File.separator + database + File.separator + tableName + ".tab";
+    private static String setFileName(DatabaseContext databaseContext, String databaseName, String tableName) {
+        return databaseContext.getDatabasesHome() + File.separator + databaseName + File.separator + tableName + ".tab";
     }
 
     public String getFileName() {
@@ -83,23 +90,26 @@ public class Table {
         return String.join("\t", rowData);
     }
 
-    public void writeToFile(String fileName) throws IOException {
-        File file = new File(fileName);
+    public void writeToFile() throws IOException {
+        File file = new File(databaseContext.getDatabasesHome() + File.separator +
+                    databaseName + File.separator + tableName + ".tab");
         try(java.io.FileWriter writer = new java.io.FileWriter(file);
             BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
             //first write column attributes to first line
-            String headerLine = String.join("\t", columns);
-            bufferedWriter.write(headerLine);
-            bufferedWriter.newLine();
-            rows.values().forEach(row -> {
-                try {
-                    String rowLine = rowToString(row);
-                    bufferedWriter.write(rowLine);
-                    bufferedWriter.newLine();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+            if (columns != null) {
+                String headerLine = String.join("\t", columns);
+                bufferedWriter.write(headerLine);
+                bufferedWriter.newLine();
+                rows.values().forEach(row -> {
+                    try {
+                        String rowLine = rowToString(row);
+                        bufferedWriter.write(rowLine);
+                        bufferedWriter.newLine();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
         }
     }
 
