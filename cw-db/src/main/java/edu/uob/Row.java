@@ -3,17 +3,16 @@ package edu.uob;
 import java.util.List;
 
 public class Row {
-
+    private final int rowId;
     private final List<String> rowData;
-    private final int id;
 
-    public Row(List<String> rowData) {
+    public Row(int rowId, List<String> rowData) {
+        this.rowId = rowId;
         this.rowData = rowData;
-        this.id = Integer.parseInt(rowData.get(0));
     }
 
     public int getId() {
-        return id;
+        return rowId;
     }
 
     public List<String> getRowData() {

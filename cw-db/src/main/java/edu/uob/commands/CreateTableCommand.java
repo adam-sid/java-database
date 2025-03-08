@@ -1,4 +1,7 @@
-package edu.uob;
+package edu.uob.commands;
+
+import edu.uob.DatabaseContext;
+import edu.uob.Table;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +23,16 @@ public class CreateTableCommand implements Command {
         this.databaseContext = databaseContext;
         this.databaseName = databaseName;
         this.tableName = tableName;
-        this.attributes = attributes;
+        this.attributes = setAttributes(attributes);
+    }
+
+    public ArrayList<String> setAttributes(ArrayList<String> attributes) {
+        if (attributes == null) {
+            return null;
+        } else {
+            attributes.add(0, "id");
+            return attributes;
+        }
     }
 
     public String getDatabaseName() {

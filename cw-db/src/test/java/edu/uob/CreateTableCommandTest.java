@@ -1,9 +1,10 @@
 package edu.uob;
 
-import org.junit.jupiter.api.Disabled;
+import edu.uob.commands.CreateTableCommand;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,6 +59,29 @@ public class CreateTableCommandTest {
 
         command.deleteTable();
         assertFalse(table.exists());
+    }
+
+    @Test
+    public void testIdDerivedFromTable() throws IOException {
+        String databaseName = "foodstuffs";
+        String tableName = "turkey";
+        File database = new File(".." + File.separator + "testDatabases" + File.separator + databaseName);
+        File file = new File(".." + File.separator + "testDatabases" + File.separator + databaseName, tableName + ".tab");
+        if (file.exists()) {
+            file.delete();
+        }
+        database.mkdir();
+        assertTrue(database.exists());
+
+        ArrayList<String> attributeList = new ArrayList<String>();
+        attributeList.add("weight");
+        attributeList.add("cookingTime");
+        attributeList.add("marinadeTime");
+
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        CreateTableCommand command = new CreateTableCommand(databaseContext, databaseName, tableName, attributeList);
+        command.execute();
+        assertTrue(file.exists());
     }
 }
 

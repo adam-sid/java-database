@@ -18,6 +18,8 @@ public class Table {
 
     private String fileName;
 
+    static int maxId = 1;
+
     public Table (DatabaseContext databaseContext, String databaseName,
                   String tableName, List<String> columnNames) {
         this.databaseContext = databaseContext;
@@ -45,12 +47,15 @@ public class Table {
 
     private static List<String> readColumnNames(String fileName) throws IOException {
         File file = new File(fileName);
+        System.out.println(file.getAbsolutePath());
         try(java.io.FileReader reader = new java.io.FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(reader)) {
 
             return Stream.of(bufferedReader.readLine().split("\t"))
                     .map(String::trim)
                     .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new IOException("Table cannot be found: " + fileName);
         }
     }
 
@@ -59,11 +64,15 @@ public class Table {
         try(java.io.FileReader reader = new java.io.FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(reader)) {
             //throw away column attributes
-            bufferedReader.readLine();
+            //bufferedReader.readLine();
+            System.out.println(bufferedReader.readLine());
             String line;
             while((line = bufferedReader.readLine()) != null) {
+                System.out.println(line);
                 List<String> rowData = Arrays.asList(line.split("\t"));
-                Row row = new Row(rowData);
+                int rowId = Integer.parseInt(rowData.get(0));
+                setMaxId(rowId);
+                Row row = new Row(rowId, rowData);
                 rows.put(row.getId(), row);
             }
         }
@@ -93,18 +102,16 @@ public class Table {
     public void writeToFile() throws IOException {
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                     databaseName + File.separator + tableName + ".tab");
-        try(java.io.FileWriter writer = new java.io.FileWriter(file);
+        try(java.io.FileWriter writer = new java.io.FileWriter(file, !file.exists());
             BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
-            //first write column attributes to first line
             if (columns != null) {
+                //first write column attributes to first line
                 String headerLine = String.join("\t", columns);
                 bufferedWriter.write(headerLine);
                 bufferedWriter.newLine();
                 rows.values().forEach(row -> {
                     try {
-                        String rowLine = rowToString(row);
-                        bufferedWriter.write(rowLine);
-                        bufferedWriter.newLine();
+                        writeRowToFile(bufferedWriter, row);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -112,9 +119,32 @@ public class Table {
             }
         }
     }
+    //TODO: Is buffered writer being closed here??
+    public void writeRowToFile(BufferedWriter bufferedWriter, Row row) throws IOException {
+        String rowLine = rowToString(row);
+        bufferedWriter.write(rowLine);
+        bufferedWriter.newLine();
+    }
 
     public void modifyTableData(int rowID, Integer columnIndex, String value) {
         Row row = getRow(rowID);
         row.modifyElement(columnIndex, value);
+    }
+    //TODO make this a linked list for better performance?
+    public ArrayList<String> setRowData(ArrayList<String> valueList) {
+        valueList.add(0, String.valueOf(maxId++));
+        return valueList;
+    }
+
+    public void setMaxId(int rowId) {
+        if (rowId == maxId) {
+            maxId++;
+        } else if (rowId > maxId) {
+            maxId = rowId + 1;
+        }
+    }
+
+    public int getMaxId() {
+        return maxId++;
     }
 }

@@ -1,5 +1,8 @@
 package edu.uob;
 
+import edu.uob.commands.*;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,8 +34,27 @@ public class Parser {
             case "DROP":
                 tokenIndex.incrementAndGet();
                 return parseDrop(tokenArr, tokenIndex);
+            case "INSERT":
+                tokenIndex.incrementAndGet();
+                return parseInsert(tokenArr, tokenIndex);
             default:
                 throw new RuntimeException("Unexpected token: " + nextToken);
+        }
+    }
+
+    private Command parseInsert(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        parseString(tokenArr, tokenIndex, "INTO", null);
+        String rawTableName = parsePlainText(tokenArr, tokenIndex);
+        String tableName = rawTableName.trim();
+        parseString(tokenArr, tokenIndex, "VALUES", null);
+        ArrayList<String> valueList = parseList(tokenArr, tokenIndex);
+        if (valueList == null || valueList.isEmpty()) {
+            throw new RuntimeException("No values found to insert");
+        }
+        try {
+            return new InsertCommand(databaseContext, databaseContext.getDatabaseName(), tableName, valueList);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot INSERT into table: " + tableName);
         }
     }
 
@@ -46,16 +68,20 @@ public class Parser {
                 tokenIndex.incrementAndGet();
                 return parseDropTable(tokenArr, tokenIndex);
             default:
-                throw new RuntimeException("Unexpected token: " + nextToken);
+                throw new RuntimeException("Unexpected token: " + nextToken + ". Did you mean TABLE or DATABASE?");
         }
     }
 
     private Command parseDropTable(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        return null;
+        String rawTableName = parsePlainText(tokenArr, tokenIndex);
+        String tableName = rawTableName.trim();
+        return new DropTableCommand(databaseContext, tableName);
     }
 
     private Command parseDropDatabase(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        return null;
+        String rawDatabaseName = parsePlainText(tokenArr, tokenIndex);
+        String databaseName = rawDatabaseName.trim();
+        return new DropDatabaseCommand(databaseContext, databaseName);
     }
 
     private Command parseCreate(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
@@ -68,40 +94,51 @@ public class Parser {
                 tokenIndex.incrementAndGet();
                 return parseCreateTable(tokenArr, tokenIndex);
             default:
-                throw new RuntimeException("Unexpected token: " + nextToken);
+                throw new RuntimeException("Unexpected token: " + nextToken + ". Did you mean TABLE or DATABASE?");
         }
     }
 
     private Command parseCreateTable(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
         String rawTableName = parsePlainText(tokenArr, tokenIndex);
         String tableName = rawTableName.trim();
-        ArrayList<String> attributeList = parseAttributeList(tokenArr, tokenIndex);
+        ArrayList<String> attributeList = parseList(tokenArr, tokenIndex);
         return new CreateTableCommand(databaseContext, databaseContext.getDatabaseName(), tableName, attributeList);
     }
-
-    private ArrayList<String> parseAttributeList(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        if (!parseChar(tokenArr, tokenIndex, "(")) {
+    //parses attribute or value tokens into an ArrayList and returns this
+    private ArrayList<String> parseList(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        if (!tokenArr.get(tokenIndex.get()).equals("(")) {
             return null;
         }
+        tokenIndex.incrementAndGet();
         ArrayList<String> attributeList = new ArrayList<>();
         while (tokenIndex.get() < tokenArr.size() && !tokenArr.get(tokenIndex.get()).equals(")")) {
-            tokenIndex.incrementAndGet();
             String newAttribute = parsePlainText(tokenArr, tokenIndex);
             attributeList.add(newAttribute);
-            if (!parseChar(tokenArr, tokenIndex, ",") && !parseChar(tokenArr, tokenIndex, ")")) {
-                throw new RuntimeException("Expected ')' or ',' but got " + tokenArr.get(tokenIndex.get()));
-            }
+            parseString(tokenArr, tokenIndex, ",", ")");
         }
-        if (parseChar(tokenArr, tokenIndex, ")")) {
-            tokenIndex.incrementAndGet();
-            return attributeList;
-        } else
-            throw new RuntimeException("Expected ')' but got " + tokenIndex.get());
+        parseString(tokenArr, tokenIndex, ")", null);
+        return attributeList;
     }
-    //note this function DOES NOT increment tokenIndex - must manually increment after method call
-    private boolean parseChar(ArrayList<String> tokenArr, AtomicInteger tokenIndex, String expectedChar) {
-        String actualChar = tokenArr.get(tokenIndex.get()).trim();
-        return actualChar.equals(expectedChar);
+
+    //checks if a token matches an expected string(s)
+    //IMPORTANT: if expectedStrB is found then it will walk back tokenIndex
+    private void parseString(ArrayList<String> tokenArr, AtomicInteger tokenIndex,
+                             String expectedStrA, String expectedStrB) {
+        String actualStr = tokenArr.get(tokenIndex.get()).trim();
+        tokenIndex.incrementAndGet();
+        // If only expectedStrA is provided
+        if (expectedStrB == null) {
+            if (!actualStr.equals(expectedStrA)) {
+                throw new RuntimeException("Expected '" + expectedStrA + "' but got '" + actualStr + "'");
+            }
+        // If both expectedStrA and expectedStrB are provided
+        } else if (actualStr.equals(expectedStrB)) {
+            tokenIndex.decrementAndGet(); //decrement counter if expectedStrB found, needed for Attribute List logic.
+        } else if (!actualStr.equals(expectedStrA)) {
+            throw new RuntimeException("Expected '" + expectedStrA + "' or '" + expectedStrB + "' but got '" +
+                    actualStr + "'");
+        }
+
     }
 
     private Command parseUse(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {

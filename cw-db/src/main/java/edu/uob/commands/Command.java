@@ -1,7 +1,6 @@
-package edu.uob;
+package edu.uob.commands;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public interface Command {

@@ -1,4 +1,6 @@
-package edu.uob;
+package edu.uob.commands;
+
+import edu.uob.DatabaseContext;
 
 import java.io.File;
 import java.util.List;

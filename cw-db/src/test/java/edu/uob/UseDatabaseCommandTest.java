@@ -1,5 +1,6 @@
 package edu.uob;
 
+import edu.uob.commands.UseDatabaseCommand;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

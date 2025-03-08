@@ -1,5 +1,9 @@
 package edu.uob;
 
+import edu.uob.commands.Command;
+import edu.uob.commands.CreateDatabaseCommand;
+import edu.uob.commands.CreateTableCommand;
+import edu.uob.commands.UseDatabaseCommand;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
