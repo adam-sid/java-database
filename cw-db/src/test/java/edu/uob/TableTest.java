@@ -1,6 +1,5 @@
 package edu.uob;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -47,7 +46,7 @@ public class TableTest {
         //read the table
         Table table1 = new Table( databaseContext, databaseName, "tableToBeWritten");
         //modify data
-        table1.modifyTableData(row, column, value);
+        table1.modifyRowData(row, column, value);
         //writing table to same file
         table1.writeToFile();
 

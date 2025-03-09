@@ -4,11 +4,18 @@ import edu.uob.commands.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Parser {
 
     private final DatabaseContext databaseContext;
+
+    private static final Set<String> SQL_KEYWORDS = Set.of(
+        "USE", "CREATE", "DROP", "ALTER", "INSERT", "SELECT", "UPDATE", "DELETE", "JOIN",
+        "DATABASE", "TABLE", "INTO", "VALUES", "FROM", "WHERE", "SET", "AND", "OR", "ON",
+        "ADD", "LIKE","TRUE", "FALSE"
+    );
 
     public Parser(DatabaseContext databaseContext) {
         this.databaseContext = databaseContext;
@@ -23,7 +30,7 @@ public class Parser {
     }
 
     private Command parseCommand(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String nextToken = tokenArr.get(tokenIndex.get());
+        String nextToken = tokenArr.get(tokenIndex.get()).toUpperCase();
         switch (nextToken) {
             case "CREATE":
                 tokenIndex.incrementAndGet();
@@ -59,7 +66,7 @@ public class Parser {
     }
 
     private Command parseDrop(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String nextToken = tokenArr.get(tokenIndex.get());
+        String nextToken = tokenArr.get(tokenIndex.get()).toUpperCase();
         switch (nextToken) {
             case "DATABASE":
                 tokenIndex.incrementAndGet();
@@ -85,7 +92,7 @@ public class Parser {
     }
 
     private Command parseCreate(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String nextToken = tokenArr.get(tokenIndex.get());
+        String nextToken = tokenArr.get(tokenIndex.get()).toUpperCase();
         switch (nextToken) {
             case "DATABASE":
                 tokenIndex.incrementAndGet();
@@ -122,9 +129,10 @@ public class Parser {
 
     //checks if a token matches an expected string(s)
     //IMPORTANT: if expectedStrB is found then it will walk back tokenIndex
+    //Also write the expected string in uppercase
     private void parseString(ArrayList<String> tokenArr, AtomicInteger tokenIndex,
                              String expectedStrA, String expectedStrB) {
-        String actualStr = tokenArr.get(tokenIndex.get()).trim();
+        String actualStr = tokenArr.get(tokenIndex.get()).trim().toUpperCase();
         tokenIndex.incrementAndGet();
         // If only expectedStrA is provided
         if (expectedStrB == null) {
@@ -155,6 +163,9 @@ public class Parser {
 
     private static String parsePlainText(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
         String plainText = tokenArr.get(tokenIndex.getAndIncrement());
+        if(SQL_KEYWORDS.contains(plainText.toUpperCase())) {
+            throw new RuntimeException("SQL Keyword '" + plainText.toUpperCase() + "' is a reserved word");
+        }
         for (int i = 0 ; i != plainText.length() ; i++) {
             char c = plainText.charAt(i);
             boolean valid = Character.isAlphabetic(c) || Character.isDigit(c);

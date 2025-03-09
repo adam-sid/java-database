@@ -18,6 +18,8 @@ public class CreateTableCommand implements Command {
 
     private final ArrayList<String> attributes;
 
+    public Table table = null;
+
     public CreateTableCommand(DatabaseContext databaseContext, String databaseName, String tableName,
                               ArrayList<String> attributes) {
         this.databaseContext = databaseContext;
@@ -43,6 +45,10 @@ public class CreateTableCommand implements Command {
         return tableName;
     }
 
+    public Table getTable() {
+        return table;
+    }
+
     public void deleteTable() {
         File tableHomeFolder = new File(databaseContext.getDatabasesHome() + File.separator + databaseName);
         File file = new File(tableHomeFolder, tableName + ".tab");
@@ -65,11 +71,11 @@ public class CreateTableCommand implements Command {
         }
         try {
             Table table = new Table(databaseContext, databaseName, tableName, attributes);
+            this.table = table;
             table.writeToFile();
         } catch (IOException e) {
             throw new RuntimeException("Could not create table " + tableName);
         }
-
         return List.of();
     }
 }

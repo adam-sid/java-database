@@ -18,7 +18,7 @@ public class Table {
 
     private String fileName;
 
-    static int maxId = 1;
+    private int maxId = 1;
 
     public Table (DatabaseContext databaseContext, String databaseName,
                   String tableName, List<String> columnNames) {
@@ -32,13 +32,15 @@ public class Table {
 
     public Table (DatabaseContext databaseContext, String databaseName, String tableName) throws IOException {
         //call other constructor
-        this(databaseContext, databaseName, tableName, readColumnNames(setFileName(databaseContext, databaseName, tableName)));
+        this(databaseContext, databaseName, tableName,
+                readColumnNames(setFileName(databaseContext, databaseName, tableName)));
         fileName = setFileName(databaseContext, databaseName, tableName);
         this.readRows(fileName);
     }
 
     private static String setFileName(DatabaseContext databaseContext, String databaseName, String tableName) {
-        return databaseContext.getDatabasesHome() + File.separator + databaseName + File.separator + tableName + ".tab";
+        return databaseContext.getDatabasesHome() + File.separator + databaseName +
+                File.separator + tableName + ".tab";
     }
 
     public String getFileName() {
@@ -47,11 +49,13 @@ public class Table {
 
     private static List<String> readColumnNames(String fileName) throws IOException {
         File file = new File(fileName);
-        System.out.println(file.getAbsolutePath());
-        try(java.io.FileReader reader = new java.io.FileReader(file);
+        try(FileReader reader = new FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(reader)) {
-
-            return Stream.of(bufferedReader.readLine().split("\t"))
+            String firstLine = bufferedReader.readLine();
+            if(firstLine == null) {
+                return null;
+            }
+            return Stream.of(firstLine.split("\t"))
                     .map(String::trim)
                     .collect(Collectors.toList());
         } catch (IOException e) {
@@ -64,11 +68,9 @@ public class Table {
         try(java.io.FileReader reader = new java.io.FileReader(file);
             BufferedReader bufferedReader = new BufferedReader(reader)) {
             //throw away column attributes
-            //bufferedReader.readLine();
-            System.out.println(bufferedReader.readLine());
+            bufferedReader.readLine();
             String line;
             while((line = bufferedReader.readLine()) != null) {
-                System.out.println(line);
                 List<String> rowData = Arrays.asList(line.split("\t"));
                 int rowId = Integer.parseInt(rowData.get(0));
                 setMaxId(rowId);
@@ -126,14 +128,21 @@ public class Table {
         bufferedWriter.newLine();
     }
 
-    public void modifyTableData(int rowID, Integer columnIndex, String value) {
+    public void modifyRowData(int rowID, Integer columnIndex, String value) {
         Row row = getRow(rowID);
         row.modifyElement(columnIndex, value);
     }
     //TODO make this a linked list for better performance?
-    public ArrayList<String> setRowData(ArrayList<String> valueList) {
-        valueList.add(0, String.valueOf(maxId++));
-        return valueList;
+    public void addRow(ArrayList<String> valueList) {
+        valueList.add(0, String.valueOf(maxId));
+        if (valueList.size() == getColumns().size()) {
+            Row newRow = new Row(maxId, valueList);
+            rows.put(maxId, newRow);
+            maxId++;
+        } else {
+            throw new RuntimeException("Provided " + (valueList.size() - 1) + " elements of row data but there are " +
+                    + (getColumns().size() - 1) + " columns in table.");
+        }
     }
 
     public void setMaxId(int rowId) {
@@ -145,6 +154,6 @@ public class Table {
     }
 
     public int getMaxId() {
-        return maxId++;
+        return maxId;
     }
 }

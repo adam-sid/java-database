@@ -32,7 +32,6 @@ public class DropDatabaseCommand implements Command {
         }
         try {
             File[] databaseFiles = targetFile.listFiles();
-
             if(databaseFiles == null || databaseFiles.length == 0) {
                 targetFile.delete();
             } else {

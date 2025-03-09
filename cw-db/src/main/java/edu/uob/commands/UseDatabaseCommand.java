@@ -24,12 +24,12 @@ public class UseDatabaseCommand implements Command {
     @Override
     //TODO check if database exists
     public List<String> execute() {
-        databaseContext.setDatabaseName(databaseName);
         File targetFile = new File(Paths.get(databaseContext.getDatabasesHome() +
                 File.separator + databaseName ).toAbsolutePath().toString());
         if(!targetFile.exists() || !targetFile.isDirectory()) {
             throw new RuntimeException("No such database: " + databaseName);
         }
+        databaseContext.setDatabaseName(databaseName);
         return List.of();
     }
 }

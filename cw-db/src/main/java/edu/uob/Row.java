@@ -22,4 +22,8 @@ public class Row {
     public void modifyElement(Integer index, String value) {
         rowData.set(index, value);
     }
+
+    public String getElement(int columnIndex) {
+        return rowData.get(columnIndex);
+    }
 }

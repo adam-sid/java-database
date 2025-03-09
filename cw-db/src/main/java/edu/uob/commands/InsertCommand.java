@@ -28,15 +28,22 @@ public class InsertCommand implements Command {
         this.table = new Table(databaseContext, databaseName, tableName);
     }
 
+    public Table getTable() {
+        return table;
+    }
+
     @Override
     public List<String> execute() throws IOException {
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                 databaseName + File.separator + tableName + ".tab");
-        valueList = table.setRowData(valueList);
-        Row nextRow = new Row(table.getMaxId(), valueList);
+        int rowId = table.getMaxId();
+        if (table.getColumns() == null || table.getColumns().isEmpty()) {
+            throw new RuntimeException("Add attributes to table '" + tableName + "' before adding data");
+        }
+        table.addRow(valueList);
         try(java.io.FileWriter writer = new java.io.FileWriter(file, true);
             BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
-            table.writeRowToFile(bufferedWriter, nextRow);
+            table.writeRowToFile(bufferedWriter, table.getRow(rowId));
         }
         return List.of();
     }
