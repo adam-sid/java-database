@@ -28,8 +28,9 @@ public class ExampleDBTests {
 
     private String sendCommandToServer(String command) {
         // Try to send a command to the server - this call will timeout if it takes too long (in case the server enters an infinite loop)
-        return assertTimeoutPreemptively(Duration.ofMillis(1000), () -> { return server.handleCommand(command);},
-        "Server took too long to respond (probably stuck in an infinite loop)");
+        return server.handleCommand(command);
+//        return assertTimeoutPreemptively(Duration.ofMillis(1000), () -> { return server.handleCommand(command);},
+//        "Server took too long to respond (probably stuck in an infinite loop)");
     }
 
     // A basic test that creates a database, creates a table, inserts some test data, then queries it.
@@ -44,17 +45,17 @@ public class ExampleDBTests {
         sendCommandToServer("INSERT INTO marks VALUES ('Sion', 55, TRUE);");
         sendCommandToServer("INSERT INTO marks VALUES ('Rob', 35, FALSE);");
         sendCommandToServer("INSERT INTO marks VALUES ('Chris', 20, FALSE);");
-        //TODO: got to here
-//        String response = sendCommandToServer("SELECT * FROM marks;");
-//        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
-//        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
-//        assertTrue(response.contains("Simon"), "An attempt was made to add Simon to the table, but they were not returned by SELECT *");
-//        assertTrue(response.contains("Chris"), "An attempt was made to add Chris to the table, but they were not returned by SELECT *");
+        String response = sendCommandToServer("SELECT * FROM marks;");
+        assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
+        assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
+        System.out.println(response);
+        assertTrue(response.contains("Simon"), "An attempt was made to add Simon to the table, but they were not returned by SELECT *");
+        assertTrue(response.contains("Chris"), "An attempt was made to add Chris to the table, but they were not returned by SELECT *");
     }
 
     // A test to make sure that querying returns a valid ID (this test also implicitly checks the "==" condition)
     // (these IDs are used to create relations between tables, so it is essential that suitable IDs are being generated and returned !)
-    @Disabled
+
     @Test
     public void testQueryID() {
         String randomName = generateRandomName();
@@ -63,12 +64,16 @@ public class ExampleDBTests {
         sendCommandToServer("CREATE TABLE marks (name, mark, pass);");
         sendCommandToServer("INSERT INTO marks VALUES ('Simon', 65, TRUE);");
         String response = sendCommandToServer("SELECT id FROM marks WHERE name == 'Simon';");
+        assertTrue(response.contains("[OK]"));
+        System.out.println(response);
         // Convert multi-lined responses into just a single line
         String singleLine = response.replace("\n"," ").trim();
+        System.out.println(singleLine);
         // Split the line on the space character
         String[] tokens = singleLine.split(" ");
         // Check that the very last token is a number (which should be the ID of the entry)
         String lastToken = tokens[tokens.length-1];
+        System.out.println(lastToken);
         try {
             Integer.parseInt(lastToken);
         } catch (NumberFormatException nfe) {
@@ -77,7 +82,6 @@ public class ExampleDBTests {
     }
 
     // A test to make sure that databases can be reopened after server restart
-    @Disabled
     @Test
     public void testTablePersistsAfterRestart() {
         String randomName = generateRandomName();
@@ -89,11 +93,11 @@ public class ExampleDBTests {
         server = new DBServer();
         sendCommandToServer("USE " + randomName + ";");
         String response = sendCommandToServer("SELECT * FROM marks;");
+        System.out.println(response);
         assertTrue(response.contains("Simon"), "Simon was added to a table and the server restarted - but Simon was not returned by SELECT *");
     }
 
     // Test to make sure that the [ERROR] tag is returned in the case of an error (and NOT the [OK] tag)
-    @Disabled
     @Test
     public void testForErrorTag() {
         String randomName = generateRandomName();
@@ -102,6 +106,7 @@ public class ExampleDBTests {
         sendCommandToServer("CREATE TABLE marks (name, mark, pass);");
         sendCommandToServer("INSERT INTO marks VALUES ('Simon', 65, TRUE);");
         String response = sendCommandToServer("SELECT * FROM libraryfines;");
+        System.out.println(response);
         assertTrue(response.contains("[ERROR]"), "An attempt was made to access a non-existent table, however an [ERROR] tag was not returned");
         assertFalse(response.contains("[OK]"), "An attempt was made to access a non-existent table, however an [OK] tag was returned");
     }

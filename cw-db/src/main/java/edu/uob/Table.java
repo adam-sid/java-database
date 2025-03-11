@@ -88,6 +88,10 @@ public class Table {
         return columns;
     }
 
+    public int getColumnIndex(String columnName) {
+        return columns.indexOf(columnName);
+    }
+
     public Map<Integer, Row> getRows() {
         return rows;
     }
@@ -155,5 +159,9 @@ public class Table {
 
     public int getMaxId() {
         return maxId;
+    }
+
+    public void deleteColumn(int colIndex) {
+
     }
 }
