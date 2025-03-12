@@ -85,8 +85,8 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String expressionStr = "TRUE";
-        Expression expression = parser.parseExpression(List.of(expressionStr), new AtomicInteger(0));
+        String expressionStr = "TRUE;";
+        Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
         assertTrue((boolean)expression.evaluate(null, null));
     }
 
@@ -95,7 +95,7 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String expressionStr = "(42)";
+        String expressionStr = "(42);";
         Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
         assertEquals(42, expression.evaluate(null, null));
     }
@@ -107,10 +107,10 @@ public class ParserTest {
         String tableName = "selectTable";
         Parser parser = new Parser(databaseContext);
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
-        String expressionStr = "weirdness";
+        String expressionStr = "weirdness;";
         AttributeExpression expression = (AttributeExpression) parser.parseExpression(BasicTokeniser.setup(expressionStr),
                 new AtomicInteger(0));
-        assertEquals(expressionStr, expression.getAttributeName());
+        assertEquals("weirdness", expression.getAttributeName());
         assertEquals("C", expression.evaluate(table, new Row(0, List.of("A", "B", "C"))));
     }
 
@@ -119,8 +119,8 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String expressionStr = "123";
-        Expression expression = parser.parseExpression(List.of(expressionStr), new AtomicInteger(0));
+        String expressionStr = "123;";
+        Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
         assertEquals(123, expression.evaluate(null, null));
     }
 
@@ -131,10 +131,10 @@ public class ParserTest {
         String tableName = "selectTable";
         Parser parser = new Parser(databaseContext);
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
-        String expressionStr = "id";
+        String expressionStr = "id;";
         AttributeExpression expression = (AttributeExpression) parser.parseExpression(BasicTokeniser.setup(expressionStr),
                 new AtomicInteger(0));
-        assertEquals(expressionStr, expression.getAttributeName());
+        assertEquals("id", expression.getAttributeName());
         assertEquals("A", expression.evaluate(table, new Row(0, List.of("A", "B", "C"))));
     }
 
@@ -143,9 +143,19 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String expressionStr = "123 = 123";
+        String expressionStr = "123 == 123;";
         Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
-        assertEquals(123, expression.evaluate(null, null));
+        assertEquals(true, expression.evaluate(null, null));
+    }
+
+    @Test
+    public void parseNotEqualsExpression() {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        Parser parser = new Parser(databaseContext);
+        String expressionStr = "123 != 123;";
+        Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
+        assertEquals(false, expression.evaluate(null, null));
     }
 
 }

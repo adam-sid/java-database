@@ -14,6 +14,7 @@ public class Parser {
     private final DatabaseContext databaseContext;
     //TODO get clarity on reserved words
     //TODO how to handle NULLs
+    //TODO make increment/get functions
     private static final Set<String> SQL_KEYWORDS = Set.of(
         "USE", "CREATE", "DROP", "ALTER", "INSERT", "SELECT", "UPDATE", "DELETE", "JOIN",
         "DATABASE", "TABLE", "INTO", "VALUES", "FROM", "WHERE", "SET", "AND", "OR", "ON",
@@ -35,7 +36,7 @@ public class Parser {
     );
 
     private static final Set<String> COMPARATOR = Set.of(
-        "==" , ">" , "<" , ">=" , "<=" , "!=" , " LIKE "
+        "==" , ">" , "<" , ">=" , "<=" , "!=" , "LIKE"
     );
 
     public Parser(DatabaseContext databaseContext) {
@@ -132,6 +133,14 @@ public class Parser {
         } else if (isAttribute(nextToken)) {
             firstExpression = new AttributeExpression(nextToken);
         }
+        //if there is a new comparator
+        nextToken = tokenArr.get(tokenIndex.get());
+        if (COMPARATOR.contains(nextToken)) {
+            tokenIndex.getAndIncrement();
+            Expression secondExpression = parseExpression(tokenArr, tokenIndex);
+            return new ComparatorExpression(nextToken, firstExpression, secondExpression);
+        }
+
         if (firstExpression != null) {
             return firstExpression;
         }
