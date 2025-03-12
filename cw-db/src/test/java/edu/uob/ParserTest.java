@@ -158,4 +158,13 @@ public class ParserTest {
         assertEquals(false, expression.evaluate(null, null));
     }
 
+    @Test
+    public void parseNoSemiColonExpression() {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        Parser parser = new Parser(databaseContext);
+        String expressionStr = "123 != 123";
+        assertThrows(RuntimeException.class, () -> parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0)));
+    }
+
 }

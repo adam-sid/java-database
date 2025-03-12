@@ -4,6 +4,7 @@ import edu.uob.commands.*;
 import edu.uob.expression.*;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -52,7 +53,7 @@ public class Parser {
     }
 
     private Command parseCommand(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String nextToken = tokenArr.get(tokenIndex.get()).toUpperCase();
+        String nextToken = peekNextToken(tokenArr, tokenIndex).toUpperCase();
         switch (nextToken) {
             case "CREATE":
                 tokenIndex.incrementAndGet();
@@ -86,7 +87,7 @@ public class Parser {
     }
 
     private String parseAlterType(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String alterType = tokenArr.get(tokenIndex.get()).toUpperCase();
+        String alterType = peekNextToken(tokenArr, tokenIndex).toUpperCase();
         if ("ADD".equals(alterType) || "DROP".equals(alterType)) {
             tokenIndex.incrementAndGet();
             return alterType;
@@ -97,11 +98,11 @@ public class Parser {
 
     private Command parseSelect(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
         ArrayList<String> attributeList = null;
-        boolean isWild = tokenArr.get(tokenIndex.get()).equals("*");
+        boolean isWild = peekNextToken(tokenArr, tokenIndex).equals("*");
         if (!isWild) {
             attributeList = parseList(tokenArr, tokenIndex, false);
             if (attributeList == null) {
-                throw new RuntimeException("Expected list of attributes but received " + tokenArr.get(tokenIndex.get()));
+                throw new RuntimeException("Expected list of attributes but received " + peekNextToken(tokenArr, tokenIndex));
             }
         } else {
             tokenIndex.incrementAndGet();
@@ -109,7 +110,7 @@ public class Parser {
         parseString(tokenArr, tokenIndex, "FROM");
         String tableName = parsePlainText(tokenArr, tokenIndex);
         Expression condition = null;
-        if (tokenArr.get(tokenIndex.get()).equalsIgnoreCase("WHERE")) {
+        if (peekNextToken(tokenArr, tokenIndex).equalsIgnoreCase("WHERE")) {
             parseString(tokenArr, tokenIndex, "WHERE");
             condition = parseExpression(tokenArr, tokenIndex);
         }
@@ -117,7 +118,7 @@ public class Parser {
     }
 
     Expression parseExpression(List<String> tokenArr, AtomicInteger tokenIndex) {
-        String nextToken = tokenArr.get(tokenIndex.getAndIncrement());
+        String nextToken = getNextToken(tokenArr, tokenIndex);
         Expression firstExpression = null;
         if(BOOL_LITERAL.contains(nextToken)) {
             firstExpression = new LiteralExpression(Boolean.parseBoolean(nextToken));
@@ -125,7 +126,7 @@ public class Parser {
             firstExpression = new LiteralExpression(Integer.parseInt(nextToken));
         } else if(nextToken.equals("(")) {
             Expression e = parseExpression(tokenArr, tokenIndex);
-            nextToken = tokenArr.get(tokenIndex.getAndIncrement());
+            nextToken = getNextToken(tokenArr, tokenIndex);
             if(!nextToken.equals(")")) {
                 throw new RuntimeException("Missing closing bracket at end of expression:" + nextToken);
             }
@@ -134,7 +135,7 @@ public class Parser {
             firstExpression = new AttributeExpression(nextToken);
         }
         //if there is a new comparator
-        nextToken = tokenArr.get(tokenIndex.get());
+        nextToken = peekNextToken(tokenArr, tokenIndex);
         if (COMPARATOR.contains(nextToken)) {
             tokenIndex.getAndIncrement();
             Expression secondExpression = parseExpression(tokenArr, tokenIndex);
@@ -184,7 +185,7 @@ public class Parser {
     }
 
     private Command parseDrop(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String nextToken = tokenArr.get(tokenIndex.get()).toUpperCase();
+        String nextToken = peekNextToken(tokenArr, tokenIndex).toUpperCase();
         switch (nextToken) {
             case "DATABASE":
                 tokenIndex.incrementAndGet();
@@ -208,7 +209,7 @@ public class Parser {
     }
 
     private Command parseCreate(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String nextToken = tokenArr.get(tokenIndex.get()).toUpperCase();
+        String nextToken = peekNextToken(tokenArr, tokenIndex).toUpperCase();
         switch (nextToken) {
             case "DATABASE":
                 tokenIndex.incrementAndGet();
@@ -221,10 +222,18 @@ public class Parser {
         }
     }
 
+    private static String peekNextToken(List<String> tokenArr, AtomicInteger tokenIndex) {
+        try {
+            return tokenArr.get(tokenIndex.get());
+        } catch (IndexOutOfBoundsException aob) {
+            throw new RuntimeException("Unexpected end of line");
+        }
+    }
+
     private Command parseCreateTable(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
         String tableName = parsePlainText(tokenArr, tokenIndex);
         ArrayList<String> attributeList = null;
-        if (tokenArr.get(tokenIndex.get()).equals("(")) {
+        if (peekNextToken(tokenArr, tokenIndex).equals("(")) {
             parseString(tokenArr, tokenIndex, "(");
             attributeList = parseList(tokenArr, tokenIndex, false);
             parseString(tokenArr, tokenIndex, ")");
@@ -236,7 +245,7 @@ public class Parser {
         ArrayList<String> attributeList = new ArrayList<>();
         String listString = isValue ? parseValue(tokenArr, tokenIndex) : parsePlainText(tokenArr, tokenIndex);
         attributeList.add(listString);
-        while ((tokenIndex.get() < tokenArr.size()) && tokenArr.get(tokenIndex.get()).equals(",")) {
+        while ((tokenIndex.get() < tokenArr.size()) && peekNextToken(tokenArr, tokenIndex).equals(",")) {
             tokenIndex.incrementAndGet();
             listString = isValue ? parseValue(tokenArr, tokenIndex) : parsePlainText(tokenArr, tokenIndex);
             attributeList.add(listString);
@@ -245,7 +254,7 @@ public class Parser {
     }
 
     private String parseValue(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String value = tokenArr.get(tokenIndex.getAndIncrement());
+        String value = getNextToken(tokenArr, tokenIndex);
         if (BOOL_LITERAL.contains(value.toUpperCase())) {
             return value; //if boolean literal
         }
@@ -264,6 +273,14 @@ public class Parser {
         else {  //must be a number if all above false
             parseIntOrFloat(value);
             return value;
+        }
+    }
+
+    private static String getNextToken(List<String> tokenArr, AtomicInteger tokenIndex) {
+        try {
+            return tokenArr.get(tokenIndex.getAndIncrement());
+        } catch (IndexOutOfBoundsException aob) {
+            throw new RuntimeException("Unexpected end of line");
         }
     }
 
@@ -318,7 +335,7 @@ public class Parser {
 
     //checks if a token matches an expected string(s)
     private void parseString(ArrayList<String> tokenArr, AtomicInteger tokenIndex, String expectedStr) {
-        String actualStr = tokenArr.get(tokenIndex.get()).toUpperCase();
+        String actualStr = peekNextToken(tokenArr, tokenIndex).toUpperCase();
         tokenIndex.incrementAndGet();
         if (!actualStr.equals(expectedStr)) {
             throw new RuntimeException("Expected '" + expectedStr + "' but got '" + actualStr + "'");
@@ -336,7 +353,7 @@ public class Parser {
     }
 
     private static String parsePlainText(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String plainText = tokenArr.get(tokenIndex.getAndIncrement());
+        String plainText = getNextToken(tokenArr, tokenIndex);
         if(SQL_KEYWORDS.contains(plainText.toUpperCase())) {
             throw new RuntimeException("SQL Keyword '" + plainText.toUpperCase() + "' is a reserved word");
         } else if (BOOL_LITERAL.contains(plainText.toUpperCase())) {
@@ -357,7 +374,7 @@ public class Parser {
         if (tokenIndex.get() >= tokenArr.size()) {
             throw new RuntimeException("Reached end of input but no semi-colon found");
         }
-        String nextToken = tokenArr.get(tokenIndex.get());
+        String nextToken = peekNextToken(tokenArr, tokenIndex);
         if (!nextToken.equals(";")) {
             throw new RuntimeException("Semi-colon expected at position " + tokenIndex.get());
         }
