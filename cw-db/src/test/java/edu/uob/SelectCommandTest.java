@@ -1,7 +1,10 @@
 package edu.uob;
 
 import edu.uob.commands.SelectCommand;
+import edu.uob.expression.AttributeExpression;
+import edu.uob.expression.ComparatorExpression;
 import edu.uob.expression.Expression;
+import edu.uob.expression.LiteralExpression;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -48,11 +51,14 @@ public class SelectCommandTest {
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                 databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());
-        Expression expression = null;
+        Expression firstExpression = new AttributeExpression("id");
+        Expression secondExpression = new LiteralExpression("4");
+        Expression expression = new ComparatorExpression("==", firstExpression, secondExpression);
+
         SelectCommand command = new SelectCommand(databaseContext, tableName, true, null, expression);
         List<String> response = command.execute();
-        assertTrue(response.size() > 0);
-        assertTrue(response.contains("description"));
-        assertFalse(response.contains("id"));
+        assertTrue(response.size() == 2);
+        assertTrue(response.get(0).contains("description"));
+        assertTrue(response.get(1).startsWith("4"));
     }
 }

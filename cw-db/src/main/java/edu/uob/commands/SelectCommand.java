@@ -7,6 +7,7 @@ import edu.uob.expression.Expression;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class SelectCommand implements Command {
 
     private final Table table;
 
-    private final Expression expression;
+    private final Expression whereClause;
 
     public SelectCommand(DatabaseContext databaseContext, String tableName, Boolean isWild,
                          ArrayList<String> attributes, Expression condition) {
@@ -31,7 +32,7 @@ public class SelectCommand implements Command {
         this.tableName = tableName;
         this.isWild = isWild;
         this.attributes = attributes;
-        this.expression = condition;
+        this.whereClause = condition;
         this.table = setTable();
     }
 
@@ -61,10 +62,15 @@ public class SelectCommand implements Command {
             queryColumns.add(colIndex);
         }
         Map<Integer, Row> rows;
-        if (expression == null) {
+        if (whereClause == null) {
             rows = table.getRows();
         } else {
-            rows = null;
+            rows = new HashMap<Integer, Row>();
+            table.getRows().values().forEach(row -> {
+                if ((boolean)whereClause.evaluate(table, row)) {
+                    rows.put(row.getId(), row);
+                }
+            });
         }
         result.add(  //add column data in order of appearance in query
             queryColumns.stream()
