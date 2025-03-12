@@ -6,7 +6,9 @@ import edu.uob.Table;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CreateTableCommand implements Command {
 
@@ -33,6 +35,13 @@ public class CreateTableCommand implements Command {
             return null;
         } else {
             attributes.add(0, "id");
+            Set<String> seen = new HashSet<>();
+            for (String a : attributes) {
+                if (!seen.add(a.toLowerCase())) {
+                    throw new RuntimeException("Multiple instances of '" + a +
+                            "'. Attributes must be unique");
+                }
+            }
             return attributes;
         }
     }

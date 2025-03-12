@@ -1,9 +1,9 @@
 package edu.uob.commands;
 
-import edu.uob.Condition;
 import edu.uob.DatabaseContext;
 import edu.uob.Row;
 import edu.uob.Table;
+import edu.uob.expression.Expression;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,19 +19,19 @@ public class SelectCommand implements Command {
 
     private final Boolean isWild;
 
-    private final Condition condition;
-
     private ArrayList<String> attributes;
 
     private final Table table;
 
+    private final Expression expression;
+
     public SelectCommand(DatabaseContext databaseContext, String tableName, Boolean isWild,
-                         ArrayList<String> attributes, Condition condition) {
+                         ArrayList<String> attributes, Expression condition) {
         this.databaseContext = databaseContext;
         this.tableName = tableName;
         this.isWild = isWild;
         this.attributes = attributes;
-        this.condition = condition;
+        this.expression = condition;
         this.table = setTable();
     }
 
@@ -47,29 +47,36 @@ public class SelectCommand implements Command {
     public List<String> execute() throws IOException {
         List<String> result = new ArrayList<>();
         List<String> columns = table.getColumns();
-        Map<Integer, Row> rows = table.getRows();
-        List<Integer> queryColumns = new ArrayList<>(); //list of relevant column indexes
+        //which columns need returning?
+        List<Integer> queryColumns = new ArrayList<>();
         if(isWild){
             attributes = (ArrayList<String>) columns;
         }
         for (String attribute : attributes) {
             int colIndex = columns.indexOf(attribute);
             if (colIndex == -1) {
-                throw new RuntimeException("Attribute " + attribute + " not found in table " + tableName);
+                throw new RuntimeException("Attribute " + attribute +
+                        " not found in table " + tableName);
             }
             queryColumns.add(colIndex);
         }
+        Map<Integer, Row> rows;
+        if (expression == null) {
+            rows = table.getRows();
+        } else {
+            rows = null;
+        }
         result.add(  //add column data in order of appearance in query
             queryColumns.stream()
-                .map(columns::get)
-                .collect(Collectors.joining("\t"))
+            .map(columns::get)
+            .collect(Collectors.joining("\t"))
         );
         for (Row row : rows.values()){ //add row data
             List<String> rowData = row.getRowData();
             result.add(
                 queryColumns.stream()
-                    .map(rowData::get)
-                    .collect(Collectors.joining("\t"))
+                .map(rowData::get)
+                .collect(Collectors.joining("\t"))
             );
         }
         return result;

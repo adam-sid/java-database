@@ -1,14 +1,12 @@
 package edu.uob.commands;
 
 import edu.uob.DatabaseContext;
-import edu.uob.Row;
 import edu.uob.Table;
+import edu.uob.Util;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
 
 public class AlterCommand implements Command {
 
@@ -37,17 +35,18 @@ public class AlterCommand implements Command {
     @Override
     public List<String> execute() throws IOException {
         List<String> columns = table.getColumns();
-        Map<Integer, Row> rows = table.getRows();
         if("ADD".equals(alterType)) {
-            table.addColumn();
-        } else {
-            int colIndex = columns.indexOf(attribute);
-            if (colIndex == -1) {
-                throw new RuntimeException("Attribute " + attribute + " not found in table " + tableName);
+            if (!columns.contains(attribute)) {
+                table.addColumn(attribute);
+            } else {
+                throw new RuntimeException("Multiple instances of '" + attribute +
+                        "'. Attributes must be unique");
             }
+        } else {
+            int colIndex = Util.getIndexOf(columns, attribute);
             table.deleteColumn(colIndex);
         }
-
         return List.of();
     }
+
 }

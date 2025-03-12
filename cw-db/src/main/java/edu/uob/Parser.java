@@ -1,9 +1,11 @@
 package edu.uob;
 
 import edu.uob.commands.*;
+import edu.uob.expression.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -11,6 +13,7 @@ public class Parser {
 
     private final DatabaseContext databaseContext;
     //TODO get clarity on reserved words
+    //TODO how to handle NULLs
     private static final Set<String> SQL_KEYWORDS = Set.of(
         "USE", "CREATE", "DROP", "ALTER", "INSERT", "SELECT", "UPDATE", "DELETE", "JOIN",
         "DATABASE", "TABLE", "INTO", "VALUES", "FROM", "WHERE", "SET", "AND", "OR", "ON",
@@ -83,7 +86,7 @@ public class Parser {
 
     private String parseAlterType(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
         String alterType = tokenArr.get(tokenIndex.get()).toUpperCase();
-        if ("ALTER".equals(alterType) || "DROP".equals(alterType)) {
+        if ("ADD".equals(alterType) || "DROP".equals(alterType)) {
             tokenIndex.incrementAndGet();
             return alterType;
         } else {
@@ -104,15 +107,53 @@ public class Parser {
         }
         parseString(tokenArr, tokenIndex, "FROM");
         String tableName = parsePlainText(tokenArr, tokenIndex);
-        Condition condition = null;
+        Expression condition = null;
         if (tokenArr.get(tokenIndex.get()).equalsIgnoreCase("WHERE")) {
-            condition = parseCondition(tokenArr, tokenIndex);
+            parseString(tokenArr, tokenIndex, "WHERE");
+            condition = parseExpression(tokenArr, tokenIndex);
         }
-        return new SelectCommand(databaseContext, tableName, isWild, attributeList, condition);
+        return new SelectCommand(databaseContext, tableName, isWild, attributeList, condition );
     }
 
-    private Condition parseCondition(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        return null;
+    Expression parseExpression(List<String> tokenArr, AtomicInteger tokenIndex) {
+        String nextToken = tokenArr.get(tokenIndex.getAndIncrement());
+        Expression firstExpression = null;
+        if(BOOL_LITERAL.contains(nextToken)) {
+            firstExpression = new LiteralExpression(Boolean.parseBoolean(nextToken));
+        } else if(isInteger(nextToken)) {
+            firstExpression = new LiteralExpression(Integer.parseInt(nextToken));
+        } else if(nextToken.equals("(")) {
+            Expression e = parseExpression(tokenArr, tokenIndex);
+            nextToken = tokenArr.get(tokenIndex.getAndIncrement());
+            if(!nextToken.equals(")")) {
+                throw new RuntimeException("Missing closing bracket at end of expression:" + nextToken);
+            }
+            firstExpression = e;
+        } else if (isAttribute(nextToken)) {
+            firstExpression = new AttributeExpression(nextToken);
+        }
+        if (firstExpression != null) {
+            return firstExpression;
+        }
+        throw new RuntimeException("Unexpected token '" + nextToken + "' in expression");
+    }
+
+    private boolean isInteger(String nextToken) {
+        try {
+            Integer.parseInt(nextToken);
+            return true;
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+    }
+
+    private boolean isAttribute(String nextToken) {
+        try {
+            Integer.parseInt(nextToken);
+            return false;
+        } catch (NumberFormatException e) {
+            return true;
+        }
     }
 
     //TODO don't need databasename in the insert command as can be derived from database context

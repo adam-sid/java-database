@@ -30,6 +30,9 @@ public class CreateDatabaseCommand implements Command{
     public List<String> execute() {
         File databasesHomeFolder = new File(databaseContext.getDatabasesHome());
         File file = new File(databasesHomeFolder, databaseName);
+        if (file.exists()) {
+            throw new RuntimeException("Database " + databaseName + " already exists");
+        }
         file.mkdirs();
         return List.of();
     }

@@ -43,7 +43,6 @@ public class CreateTableCommandTest {
     public void testTableWithAttributes() {
         String tableName = "tableTest";
         ArrayList<String> attributeList = new ArrayList<String>();
-        attributeList.add("id");
         attributeList.add("name");
         attributeList.add("age");
 

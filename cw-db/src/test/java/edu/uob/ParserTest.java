@@ -4,12 +4,14 @@ import edu.uob.commands.Command;
 import edu.uob.commands.CreateDatabaseCommand;
 import edu.uob.commands.CreateTableCommand;
 import edu.uob.commands.UseDatabaseCommand;
-import org.junit.jupiter.api.Disabled;
+import edu.uob.expression.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -76,6 +78,74 @@ public class ParserTest {
         Parser parser = new Parser(databaseContext);
         //parser.parse(BasicTokeniser.setup("SELECT * FROM selectTest;"));
         assertThrows(RuntimeException.class, () -> parser.parse(BasicTokeniser.setup("SELECT FROM selectTest;")));
+    }
+
+    @Test
+    public void parseBooleanExpression() {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        Parser parser = new Parser(databaseContext);
+        String expressionStr = "TRUE";
+        Expression expression = parser.parseExpression(List.of(expressionStr), new AtomicInteger(0));
+        assertTrue((boolean)expression.evaluate(null, null));
+    }
+
+    @Test
+    public void parseExpressionInBrackets() {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        Parser parser = new Parser(databaseContext);
+        String expressionStr = "(42)";
+        Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
+        assertEquals(42, expression.evaluate(null, null));
+    }
+
+    @Test
+    public void parseVariable() throws IOException {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        String tableName = "selectTable";
+        Parser parser = new Parser(databaseContext);
+        Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
+        String expressionStr = "weirdness";
+        AttributeExpression expression = (AttributeExpression) parser.parseExpression(BasicTokeniser.setup(expressionStr),
+                new AtomicInteger(0));
+        assertEquals(expressionStr, expression.getAttributeName());
+        assertEquals("C", expression.evaluate(table, new Row(0, List.of("A", "B", "C"))));
+    }
+
+    @Test
+    public void parseIntegerExpression() {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        Parser parser = new Parser(databaseContext);
+        String expressionStr = "123";
+        Expression expression = parser.parseExpression(List.of(expressionStr), new AtomicInteger(0));
+        assertEquals(123, expression.evaluate(null, null));
+    }
+
+    @Test
+    public void parseVariableWhereVariableIsId() throws IOException {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        String tableName = "selectTable";
+        Parser parser = new Parser(databaseContext);
+        Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
+        String expressionStr = "id";
+        AttributeExpression expression = (AttributeExpression) parser.parseExpression(BasicTokeniser.setup(expressionStr),
+                new AtomicInteger(0));
+        assertEquals(expressionStr, expression.getAttributeName());
+        assertEquals("A", expression.evaluate(table, new Row(0, List.of("A", "B", "C"))));
+    }
+
+    @Test
+    public void parseEqualsExpression() {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        Parser parser = new Parser(databaseContext);
+        String expressionStr = "123 = 123";
+        Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
+        assertEquals(123, expression.evaluate(null, null));
     }
 
 }

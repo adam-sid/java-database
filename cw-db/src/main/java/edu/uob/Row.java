@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Row {
     private final int rowId;
-    private final List<String> rowData;
+    private List<String> rowData;
 
     public Row(int rowId, List<String> rowData) {
         this.rowId = rowId;
@@ -25,5 +25,13 @@ public class Row {
 
     public String getElement(int columnIndex) {
         return rowData.get(columnIndex);
+    }
+
+    public void addElement(String value) {
+        rowData.add(value);
+    }
+
+    public void deleteElement(int colIndex) {
+        rowData.remove(colIndex);
     }
 }

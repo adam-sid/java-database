@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 public class Table {
     private final String tableName;
 
-    private final List<String> columns;
+    private List<String> columns;
 
     private final Map<Integer, Row> rows;
 
@@ -71,7 +71,7 @@ public class Table {
             bufferedReader.readLine();
             String line;
             while((line = bufferedReader.readLine()) != null) {
-                List<String> rowData = Arrays.asList(line.split("\t"));
+                List<String> rowData = new ArrayList<>(Arrays.asList(line.split("\t")));
                 int rowId = Integer.parseInt(rowData.get(0));
                 setMaxId(rowId);
                 Row row = new Row(rowId, rowData);
@@ -161,7 +161,23 @@ public class Table {
         return maxId;
     }
 
-    public void deleteColumn(int colIndex) {
+    public void deleteColumn(int colIndex) throws IOException {
+        if(colIndex == 0) {
+            throw new RuntimeException("id is a protected column");
+        }
+        columns.remove(colIndex);
+        rows.values().forEach(row -> row.deleteElement(colIndex));
+        writeToFile();
+    }
 
+    public void addColumn(String attributeName) throws IOException {
+        if (columns == null){
+            this.columns = new ArrayList<>();
+            columns.add("id");
+        }
+        columns.add(attributeName);
+        //TODO aim for consistency with NULL vs tab
+        rows.values().forEach(row -> row.addElement("NULL"));
+        writeToFile();
     }
 }
