@@ -6,9 +6,11 @@ import edu.uob.Util;
 
 import java.util.List;
 
-public class AttributeExpression implements Expression{
+public class AttributeExpression implements Expression {
 
     private String attributeName;
+
+    private int colIndex;
 
     public AttributeExpression(String attributeName) {
         this.attributeName = attributeName;
@@ -22,10 +24,20 @@ public class AttributeExpression implements Expression{
         this.attributeName = attributeName;
     }
 
+    public int getColIndex() {
+        return colIndex;
+    }
+
+    public void setColIndex(int colIndex) {
+        this.colIndex = colIndex;
+    }
+
     @Override
-    public Object evaluate(Table table, Row row) {
+    public String evaluate(Table table, Row row) {
         List<String> columns = table.getColumns();
-        int colIndex = Util.getIndexOf(columns, attributeName);
+        setColIndex(Util.getIndexOf(columns, attributeName));
         return row.getElement(colIndex);
     }
+
+
 }

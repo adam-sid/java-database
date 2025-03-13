@@ -35,11 +35,15 @@ public class AlterCommand implements Command {
     @Override
     public List<String> execute() throws IOException {
         List<String> columns = table.getColumns();
+        List<String> lowerCaseColumns = columns.stream()
+            .map(String::toLowerCase)
+            .toList();
+        String lowerAttribute = attribute.toLowerCase();
         if("ADD".equals(alterType)) {
-            if (!columns.contains(attribute)) {
+            if (!lowerCaseColumns.contains(lowerAttribute)) {
                 table.addColumn(attribute);
             } else {
-                throw new RuntimeException("Multiple instances of '" + attribute +
+                throw new RuntimeException("Multiple instances of '" + lowerAttribute +
                         "'. Attributes must be unique");
             }
         } else {

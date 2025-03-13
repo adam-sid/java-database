@@ -1,3 +1,3 @@
-id	size	spEed	tastiness	pinkness
-1	'big'	'fast'	'very'	NULL
-2	TRUE	NULL	'very'	NULL
+id	spEed	tastiness	sIze	SIZE
+1	'fast'	'very'	NULL	NULL
+2	NULL	'very'	NULL	NULL

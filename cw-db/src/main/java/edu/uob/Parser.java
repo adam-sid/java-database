@@ -72,9 +72,57 @@ public class Parser {
             case "ALTER":
                 tokenIndex.incrementAndGet();
                 return parseAlter(tokenArr, tokenIndex);
+            case "UPDATE":
+                tokenIndex.incrementAndGet();
+                return parseUpdate(tokenArr, tokenIndex);
+            case "DELETE":
+                tokenIndex.incrementAndGet();
+                return parseDelete(tokenArr, tokenIndex);
             default:
                 throw new RuntimeException("Unexpected token: " + nextToken);
         }
+    }
+
+    private Command parseDelete(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        parseString(tokenArr, tokenIndex, "FROM");
+        String tableName = parsePlainText(tokenArr, tokenIndex);
+        parseString(tokenArr, tokenIndex, "WHERE");
+        Expression condition = parseExpression(tokenArr, tokenIndex);
+        return new DeleteCommand(databaseContext, tableName, condition);
+    }
+
+    private Command parseUpdate(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        String tableName = parsePlainText(tokenArr, tokenIndex);
+        parseString(tokenArr, tokenIndex, "SET");
+        String attributeName;
+        String value;
+        String nextToken = peekNextToken(tokenArr, tokenIndex);
+        if(nextToken.contains("=")) {
+            String[] parts = nextToken.split("=", 2); // Split into two parts only
+            attributeName = parts[0].trim();
+            value = parts[1].trim();
+            if(attributeName.isEmpty())
+                throw new RuntimeException("Expected attribute before =");
+            if(value.isEmpty()) {
+                getNextToken(tokenArr, tokenIndex);
+                value = parseValue(tokenArr, tokenIndex);
+            }
+        } else {
+            attributeName = parsePlainText(tokenArr, tokenIndex);
+            nextToken = getNextToken(tokenArr, tokenIndex);
+            if(nextToken.equals("=")) {
+                getNextToken(tokenArr, tokenIndex);
+                value = parseValue(tokenArr, tokenIndex);
+            } else if (nextToken.startsWith("=")) {
+                value = nextToken.substring(1).trim(); // Remove '=' and trim whitespace
+            } else {
+                throw new RuntimeException("Unexpected token: " + nextToken);
+            }
+        }
+        parseString(tokenArr, tokenIndex, "WHERE");
+        Expression condition = parseExpression(tokenArr, tokenIndex);
+        return new UpdateCommand(databaseContext, tableName, attributeName, value,
+                condition);
     }
 
     private Command parseAlter(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
@@ -125,8 +173,6 @@ public class Parser {
         Expression firstExpression = null;
         if(BOOL_LITERAL.contains(nextToken)) {
             firstExpression = new LiteralExpression(Boolean.parseBoolean(nextToken));
-        } else if(isInteger(nextToken)) {
-            firstExpression = new LiteralExpression(Integer.parseInt(nextToken));
         } else if(nextToken.equals("(")) {
             Expression e = parseExpression(tokenArr, tokenIndex);
             nextToken = getNextToken(tokenArr, tokenIndex);
@@ -134,8 +180,13 @@ public class Parser {
                 throw new RuntimeException("Missing closing bracket at end of expression:" + nextToken);
             }
             firstExpression = e;
-        } else if (isAttribute(nextToken)) {
-            firstExpression = new AttributeExpression(nextToken);
+        } else if (isFirstExpression && isAttribute(nextToken)) {
+            firstExpression = new AttributeExpression(nextToken); //This is definitely an attribute
+        } else if (!isFirstExpression && !isAttribute(nextToken)) { //This is definitely a value
+            if(nextToken.startsWith("'") && nextToken.endsWith("'")) {
+                nextToken = nextToken.substring(1, nextToken.length() - 1);
+            }
+            return new ValueExpression(nextToken);
         }
         //process second expression (if there is one)
         if (isFirstExpression) {
@@ -153,22 +204,21 @@ public class Parser {
         throw new RuntimeException("Unexpected token '" + nextToken + "' in expression");
     }
 
-    private boolean isInteger(String nextToken) {
-        try {
-            Integer.parseInt(nextToken);
-            return true;
-        } catch (NumberFormatException nfe) {
-            return false;
-        }
-    }
-
     private boolean isAttribute(String nextToken) {
-        try {
-            Integer.parseInt(nextToken);
+        if (nextToken.chars().allMatch(Character::isDigit)) {
             return false;
-        } catch (NumberFormatException e) {
-            return true;
         }
+        if (BOOL_LITERAL.contains(nextToken.toUpperCase()) || nextToken.equalsIgnoreCase("null")) {
+            return false;
+        }
+        for (int i = 0 ; i != nextToken.length() ; i++) {
+            char c = nextToken.charAt(i);
+            boolean valid = Character.isAlphabetic(c) || Character.isDigit(c);
+            if (!valid) {
+                return false;
+            }
+        }
+        return true;
     }
 
     //TODO don't need databasename in the insert command as can be derived from database context

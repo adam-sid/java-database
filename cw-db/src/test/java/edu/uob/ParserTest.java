@@ -91,13 +91,16 @@ public class ParserTest {
     }
 
     @Test
-    public void parseExpressionInBrackets() {
+    public void parseExpressionInBrackets() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String expressionStr = "(42);";
+        String tableName = "selectTable";
+        Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
+        Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
+        String expressionStr = "(weirdness == 42);";
         Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
-        assertEquals(42, expression.evaluate(null, null));
+        assertEquals(true, expression.evaluate(table, row));
     }
 
     @Test
@@ -113,15 +116,18 @@ public class ParserTest {
         assertEquals("weirdness", expression.getAttributeName());
         assertEquals("C", expression.evaluate(table, new Row(0, List.of("A", "B", "C"))));
     }
-
+    //TODO make name==123; work same as name == 123;
     @Test
-    public void parseIntegerExpression() {
+    public void parseIntegerExpression() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String expressionStr = "123;";
+        String tableName = "selectTable";
+        Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
+        Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
+        String expressionStr = "weirdness == 42;";
         Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
-        assertEquals(123, expression.evaluate(null, null));
+        assertEquals(true, expression.evaluate(table, row));
     }
 
     @Test
@@ -138,23 +144,17 @@ public class ParserTest {
         assertEquals("A", expression.evaluate(table, new Row(0, List.of("A", "B", "C"))));
     }
 
-    @Test
-    public void parseEqualsExpression() {
-        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
-        databaseContext.setDatabaseName("Test");
-        Parser parser = new Parser(databaseContext);
-        String expressionStr = "123 == 123;";
-        Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
-        assertEquals(true, expression.evaluate(null, null));
-    }
 
     @Test
-    public void parseNotEqualsExpression() {
+    public void parseNotEqualsExpression() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String expressionStr = "123 != 123;";
+        String tableName = "selectTable";
+        Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
+        Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
+        String expressionStr = "weirdness != 43;";
         Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
-        assertEquals(false, expression.evaluate(null, null));
+        assertFalse((boolean)expression.evaluate(table, row));
     }
 }
