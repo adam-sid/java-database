@@ -16,10 +16,11 @@ import java.util.List;
 /** This class implements the DB server. */
 public class DBServer {
 
-    private final Parser parser;
-    private final DatabaseContext databaseContext;
     private static final char END_OF_TRANSMISSION = 4;
     private String storageFolderPath;
+    private final DatabaseContext databaseContext;
+    private final Parser parser;
+
 
     public static void main(String args[]) throws IOException {
         DBServer server = new DBServer();

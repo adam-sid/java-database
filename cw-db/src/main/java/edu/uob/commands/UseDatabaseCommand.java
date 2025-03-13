@@ -22,7 +22,6 @@ public class UseDatabaseCommand implements Command {
     }
 
     @Override
-    //TODO check if database exists
     public List<String> execute() {
         File targetFile = new File(Paths.get(databaseContext.getDatabasesHome() +
                 File.separator + databaseName ).toAbsolutePath().toString());

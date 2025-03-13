@@ -1,5 +1,7 @@
 package edu.uob;
 
+import edu.uob.commands.CreateTableCommand;
+
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -149,12 +151,13 @@ public class Table {
         }
     }
 
-    public void setMaxId(int rowId) {
+    public void setMaxId(int rowId) throws IOException {
         if (rowId == maxId) {
             maxId++;
         } else if (rowId > maxId) {
             maxId = rowId + 1;
         }
+        File maxIdFile = new File("src" + File.separator + "main" + File.separator + "maxIdFile.tab");
     }
 
     public int getMaxId() {
