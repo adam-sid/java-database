@@ -1,7 +1,6 @@
 package edu.uob;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Set;
 
 public class BasicTokeniser {
 
@@ -9,7 +8,7 @@ public class BasicTokeniser {
 
     static ArrayList<String> setup(String query)
     {
-        ArrayList<String> tokens = new ArrayList<String>();
+        ArrayList<String> tokens = new ArrayList<>();
         // Split the query on single quotes (to separate out query text from string literals)
         String[] fragments = query.split("'");
         for (int i = 0; i<fragments.length; i++) {

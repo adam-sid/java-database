@@ -4,10 +4,7 @@ import edu.uob.*;
 import edu.uob.expression.Expression;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class UpdateCommand implements Command {
 
@@ -16,7 +13,7 @@ public class UpdateCommand implements Command {
     private final String tableName;
     private final List<NameValuePair> nameValueList;
     private final Expression whereClause;
-    private Table table;
+    private final Table table;
 
     public UpdateCommand(DatabaseContext databaseContext, String tableName, List<NameValuePair> nameValueList,
                          Expression condition) {

@@ -24,7 +24,4 @@ public class DatabaseContext {
         return databaseName;
     }
 
-    public String getFullPath() {
-        return databasesHome + File.separator + databaseName;
-    }
 }

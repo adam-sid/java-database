@@ -54,7 +54,7 @@ public class SelectCommand implements Command {
         if (whereClause == null) {
             rows = table.getRows();
         } else {
-            rows = new HashMap<Integer, Row>();
+            rows = new HashMap<>();
             table.getRows().values().forEach(row -> {
                 if ((boolean)whereClause.evaluate(table, row)) {
                     rows.put(row.getId(), row);

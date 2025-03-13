@@ -8,7 +8,7 @@ import java.util.List;
 
 public class AttributeExpression implements Expression {
 
-    private String attributeName;
+    private final String attributeName;
 
     private int colIndex;
 
@@ -18,14 +18,6 @@ public class AttributeExpression implements Expression {
 
     public String getAttributeName() {
         return attributeName;
-    }
-
-    public void setAttributeName(String attributeName) {
-        this.attributeName = attributeName;
-    }
-
-    public int getColIndex() {
-        return colIndex;
     }
 
     public void setColIndex(int colIndex) {

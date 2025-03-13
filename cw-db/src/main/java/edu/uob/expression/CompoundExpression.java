@@ -2,53 +2,44 @@ package edu.uob.expression;
 
 import edu.uob.Row;
 import edu.uob.Table;
-import edu.uob.Util;
-
-import java.util.Set;
 
 public class CompoundExpression implements Expression {
 
-    private static final Set<String> BOOL_OPERATOR = Set.of(
-            "AND" , "OR"
-    );
-
-    private Expression firstExpression;
-    private Expression secondExpression;
-    private String operator;
+    private final Expression firstExpression;
+    private final Expression secondExpression;
+    private final String operator;
 
     public CompoundExpression(String operator, Expression firstExpression, Expression secondExpression) {
         this.operator = operator;
         this.firstExpression = firstExpression;
         this.secondExpression = secondExpression;
     }
-
+    //not going to throw an exception so don't care about these warnings
+    @SuppressWarnings("unchecked")
     @Override
     public Object evaluate(Table table, Row row) {
         Object firstValue = firstExpression.evaluate(table, row);
         Object secondValue = secondExpression.evaluate(table, row);
 
-        Object first = firstValue;
-        Object second = secondValue;
-
         switch (operator) {
             case "==":
-                return first.equals(second);
+                return firstValue.equals(secondValue);
             case "!=":
-                return !first.equals(second);
+                return !firstValue.equals(secondValue);
             case ">":
-                return ((Comparable<Object>)first).compareTo(second) > 0;
+                return ((Comparable<Object>) firstValue).compareTo(secondValue) > 0;
             case "<":
-                return ((Comparable<Object>)first).compareTo(second) < 0;
+                return ((Comparable<Object>) firstValue).compareTo(secondValue) < 0;
             case ">=":
-                return ((Comparable<Object>)first).compareTo(second) >= 0;
+                return ((Comparable<Object>) firstValue).compareTo(secondValue) >= 0;
             case "<=":
-                return ((Comparable<Object>)first).compareTo(second) <= 0;
+                return ((Comparable<Object>) firstValue).compareTo(secondValue) <= 0;
             case "LIKE":
-                return ((String) first).contains((String) second);
+                return ((String) firstValue).contains((String) secondValue);
             case "AND":
-                return (boolean)first && (boolean)second;
+                return (boolean) firstValue && (boolean) secondValue;
             case "OR":
-                return (boolean)first || (boolean)second;
+                return (boolean) firstValue || (boolean) secondValue;
             default:
                 throw new RuntimeException("Unknown comparator '" + operator + "'");
         }

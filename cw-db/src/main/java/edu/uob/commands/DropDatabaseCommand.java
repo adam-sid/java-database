@@ -35,9 +35,7 @@ public class DropDatabaseCommand implements Command {
             if(databaseFiles == null || databaseFiles.length == 0) {
                 targetFile.delete();
             } else {
-                Arrays.stream(databaseFiles).forEach(file -> {
-                    file.delete();
-                });
+                Arrays.stream(databaseFiles).forEach(File::delete);
                 targetFile.delete();
             }
         } catch (RuntimeException e) {

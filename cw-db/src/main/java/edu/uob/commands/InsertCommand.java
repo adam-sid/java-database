@@ -1,7 +1,6 @@
 package edu.uob.commands;
 
 import edu.uob.DatabaseContext;
-import edu.uob.Row;
 import edu.uob.Table;
 
 import java.io.BufferedWriter;
@@ -16,7 +15,7 @@ public class InsertCommand implements Command {
     private final DatabaseContext databaseContext;
     private final String databaseName;
     private final String tableName;
-    private ArrayList<String> valueList;
+    private final ArrayList<String> valueList;
     private final Table table;
 
     public InsertCommand(DatabaseContext databaseContext, String databaseName,

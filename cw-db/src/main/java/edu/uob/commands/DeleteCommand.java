@@ -2,7 +2,6 @@ package edu.uob.commands;
 
 import edu.uob.DatabaseContext;
 import edu.uob.Table;
-import edu.uob.Util;
 import edu.uob.expression.Expression;
 
 import java.io.IOException;
@@ -12,7 +11,6 @@ public class DeleteCommand implements Command {
 
     private final DatabaseContext databaseContext;
     private final String tableName;
-    private final Expression expression;
     private final Table table;
     private final Expression whereClause;
 
@@ -20,7 +18,6 @@ public class DeleteCommand implements Command {
     public DeleteCommand(DatabaseContext databaseContext, String tableName, Expression condition) {
         this.databaseContext = databaseContext;
         this.tableName = tableName;
-        this.expression = condition;
         this.table = setTable();
         this.whereClause = condition;
     }

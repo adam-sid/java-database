@@ -6,7 +6,6 @@ import edu.uob.expression.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -137,7 +136,7 @@ public class Parser {
         boolean isWild = peekNextToken(tokenArr, tokenIndex).equals("*");
         if (!isWild) {
             attributeList = parseList(tokenArr, tokenIndex, false);
-            if (attributeList == null) {
+            if (attributeList.isEmpty()) {
                 throw new RuntimeException("Expected list of attributes but received " + peekNextToken(tokenArr, tokenIndex));
             }
         } else {
@@ -218,7 +217,7 @@ public class Parser {
         parseString(tokenArr, tokenIndex, "(");
         ArrayList<String> valueList = parseList(tokenArr, tokenIndex, true);
         parseString(tokenArr, tokenIndex, ")");
-        if (valueList == null || valueList.isEmpty()) {
+        if (valueList.isEmpty()) {
             throw new RuntimeException("No values found to insert");
         }
         try {

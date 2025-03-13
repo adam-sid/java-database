@@ -1,7 +1,5 @@
 package edu.uob;
 
-import edu.uob.commands.CreateTableCommand;
-
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,8 +15,6 @@ public class Table {
     private final DatabaseContext databaseContext;
 
     private final String databaseName;
-
-    private String fileName;
 
     private int maxId = 1;
 
@@ -36,17 +32,13 @@ public class Table {
         //call other constructor
         this(databaseContext, databaseName, tableName,
                 readColumnNames(setFileName(databaseContext, databaseName, tableName)));
-        fileName = setFileName(databaseContext, databaseName, tableName);
+        String fileName = setFileName(databaseContext, databaseName, tableName);
         this.readRows(fileName);
     }
 
     private static String setFileName(DatabaseContext databaseContext, String databaseName, String tableName) {
         return databaseContext.getDatabasesHome() + File.separator + databaseName +
                 File.separator + tableName + ".tab";
-    }
-
-    public String getFileName() {
-        return fileName;
     }
 
     private static List<String> readColumnNames(String fileName) throws IOException {
@@ -88,10 +80,6 @@ public class Table {
 
     public List<String> getColumns() {
         return columns;
-    }
-
-    public int getColumnIndex(String columnName) {
-        return columns.indexOf(columnName);
     }
 
     public Map<Integer, Row> getRows() {
@@ -147,17 +135,16 @@ public class Table {
             maxId++;
         } else {
             throw new RuntimeException("Provided " + (valueList.size() - 1) + " elements of row data but there are " +
-                    + (getColumns().size() - 1) + " columns in table.");
+                    (getColumns().size() - 1) + " columns in table.");
         }
     }
 
-    public void setMaxId(int rowId) throws IOException {
+    public void setMaxId(int rowId){
         if (rowId == maxId) {
             maxId++;
         } else if (rowId > maxId) {
             maxId = rowId + 1;
         }
-        File maxIdFile = new File("src" + File.separator + "main" + File.separator + "maxIdFile.tab");
     }
 
     public int getMaxId() {
