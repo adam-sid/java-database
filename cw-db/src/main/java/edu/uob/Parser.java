@@ -170,6 +170,7 @@ public class Parser {
 
     Expression parseExpression(List<String> tokenArr, AtomicInteger tokenIndex, boolean isFirstExpression) {
         String nextToken = getNextToken(tokenArr, tokenIndex);
+
         Expression firstExpression = null;
         if(BOOL_LITERAL.contains(nextToken)) {
             firstExpression = new LiteralExpression(Boolean.parseBoolean(nextToken));

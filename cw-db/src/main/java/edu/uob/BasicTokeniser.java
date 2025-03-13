@@ -1,10 +1,11 @@
 package edu.uob;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
 public class BasicTokeniser {
 
-    static String[] specialCharacters = {"(",")",",",";"};
+    static String[] specialCharacters = {"(",")",",",";","==",">","<",">=","<=","!="};
 
     static ArrayList<String> setup(String query)
     {

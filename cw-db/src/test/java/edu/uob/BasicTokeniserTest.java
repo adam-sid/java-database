@@ -13,4 +13,11 @@ public class BasicTokeniserTest {
         ArrayList<String> tokens = BasicTokeniser.setup("Hello world (\"from Mars!\")");
         assertEquals(List.of("Hello", "world", "(", "\"from, Mars!\"",")").toString(), tokens.toString());
     }
+
+    @Test
+    public void tokeniseExpression() {
+        ArrayList<String> tokens = BasicTokeniser.setup("id==4");
+        assertEquals(List.of("id", "==", "4").toString(), tokens.toString());
+    }
+
 }

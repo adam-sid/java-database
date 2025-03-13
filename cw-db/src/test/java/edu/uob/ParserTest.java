@@ -237,27 +237,27 @@ public class ParserTest {
     }
 
     @Test
-    public void parseAndExpressionNoBracket() throws IOException {
+    public void parseAndExpressionNoSpace() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
         String tableName = "selectTable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
-        String expressionStr = "description like 'ing' AND id == 5;";
+        String expressionStr = "(description like 'ing') AND (id==5);";
         Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
         assertTrue((boolean)expression.evaluate(table, row));
     }
 
     @Test
-    public void parseAndExpressionFalseNoBracket() throws IOException {
+    public void parseAndExpressionNoSpaceFalse() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
         String tableName = "selectTable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
-        String expressionStr = "description like 'ing' AND id == 4;";
+        String expressionStr = "(description like 'ing') AND (id==45);";
         Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
         assertFalse((boolean)expression.evaluate(table, row));
     }
