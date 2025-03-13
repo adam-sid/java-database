@@ -44,8 +44,11 @@ public class CompoundExpression implements Expression {
             case "<=":
                 return ((Comparable<Object>)first).compareTo(second) <= 0;
             case "LIKE":
-                boolean x = ((String)first).indexOf((String)second) != -1;
-                return x;
+                return ((String) first).contains((String) second);
+            case "AND":
+                return (boolean)first && (boolean)second;
+            case "OR":
+                return (boolean)first || (boolean)second;
             default:
                 throw new RuntimeException("Unknown comparator '" + operator + "'");
         }
