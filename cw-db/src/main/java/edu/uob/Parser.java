@@ -186,7 +186,7 @@ public class Parser {
             if(nextToken.startsWith("'") && nextToken.endsWith("'")) {
                 nextToken = nextToken.substring(1, nextToken.length() - 1);
             }
-            return new ValueExpression(nextToken);
+            return new LiteralExpression(nextToken);
         }
         //process second expression (if there is one)
         if (isFirstExpression) {
@@ -322,7 +322,6 @@ public class Parser {
             }
             value = value.substring(1, value.length() - 1);
             parseStringLiteral(value);
-            value = "'" + value + "'";
             return value; //if string literal
         }
         else {  //must be a number if all above false

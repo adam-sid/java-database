@@ -25,14 +25,7 @@ public class CompoundExpression implements Expression {
     @Override
     public Object evaluate(Table table, Row row) {
         Object firstValue = firstExpression.evaluate(table, row);
-        Object secondValue;
-        if(secondExpression instanceof ValueExpression) {
-            int colIndex = ((AttributeExpression) firstExpression).getColIndex();
-            ((ValueExpression) secondExpression).setColIndex(colIndex);
-            secondValue = secondExpression.evaluate(table, row);
-        } else {
-            secondValue = secondExpression.evaluate(table, row);
-        }
+        Object secondValue = secondExpression.evaluate(table, row);
 
         Comparable<Object> first = (Comparable<Object>) firstValue;
         Comparable<Object> second = (Comparable<Object>) secondValue;

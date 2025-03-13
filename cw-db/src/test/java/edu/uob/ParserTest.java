@@ -153,7 +153,7 @@ public class ParserTest {
         String tableName = "selectTable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
-        String expressionStr = "weirdness != 43;";
+        String expressionStr = "weirdness != 42;";
         Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
         assertFalse((boolean)expression.evaluate(table, row));
     }

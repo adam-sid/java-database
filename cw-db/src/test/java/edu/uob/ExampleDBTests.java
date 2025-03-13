@@ -72,7 +72,6 @@ public class ExampleDBTests {
         assertFalse(response.contains("2"));
         // Convert multi-lined responses into just a single line
         String singleLine = response.replace("\n"," ").trim();
-        System.out.println(singleLine);
         // Split the line on the space character
         String[] tokens = singleLine.split(" ");
         // Check that the very last token is a number (which should be the ID of the entry)
