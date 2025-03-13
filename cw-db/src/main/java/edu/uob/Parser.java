@@ -191,10 +191,10 @@ public class Parser {
         //process second expression (if there is one)
         if (isFirstExpression) {
             nextToken = peekNextToken(tokenArr, tokenIndex);
-            if (COMPARATOR.contains(nextToken) || BOOL_OPERATOR.contains(nextToken)) {
+            if (COMPARATOR.contains(nextToken.toUpperCase()) || BOOL_OPERATOR.contains(nextToken)) {
                 tokenIndex.getAndIncrement();
                 Expression secondExpression = parseExpression(tokenArr, tokenIndex, false);
-                return new CompoundExpression(nextToken, firstExpression, secondExpression);
+                return new CompoundExpression(nextToken.toUpperCase(), firstExpression, secondExpression);
             }
         }
 

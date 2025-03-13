@@ -1,5 +1,6 @@
 package edu.uob;
 
+import edu.uob.commands.Command;
 import edu.uob.commands.SelectCommand;
 import edu.uob.expression.AttributeExpression;
 import edu.uob.expression.CompoundExpression;
@@ -62,6 +63,7 @@ public class SelectCommandTest {
         assertTrue(response.get(1).startsWith("4"));
     }
 
+    @Test
     public void testSelectWithWhereAndAttributes() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
@@ -78,5 +80,39 @@ public class SelectCommandTest {
         assertTrue(response.size() == 2);
         assertTrue(response.get(0).contains("description"));
         assertTrue(response.get(1).startsWith("4"));
+    }
+
+    @Test
+    public void selectWithStringCompare() throws IOException {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        String tableName = "prawnsTest";
+        File file = new File(databaseContext.getDatabasesHome() + File.separator +
+                databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
+        assertTrue(file.exists());
+        String query = "SELECT  size, tastiness FROM prawnsTest WHERE id == 1;";
+        Parser parser = new Parser(databaseContext);
+        Command command = parser.parse(BasicTokeniser.setup(query));
+        List<String> response = command.execute();
+        assertTrue(response.size() == 2);
+        assertEquals("size\ttastiness", response.get(0));
+        assertEquals("NULL\tvery", response.get(1));
+    }
+
+    @Test
+    public void selectWithLike() throws IOException {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        String tableName = "prawnsTest";
+        File file = new File(databaseContext.getDatabasesHome() + File.separator +
+                databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
+        assertTrue(file.exists());
+        String query = "SELECT  size, tastiness FROM prawnsTest WHERE speed like 'st';";
+        Parser parser = new Parser(databaseContext);
+        Command command = parser.parse(BasicTokeniser.setup(query));
+        List<String> response = command.execute();
+        assertTrue(response.size() == 2);
+        assertEquals("size\ttastiness", response.get(0));
+        assertEquals("NULL\tvery", response.get(1));
     }
 }

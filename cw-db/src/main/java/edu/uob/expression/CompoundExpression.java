@@ -27,8 +27,8 @@ public class CompoundExpression implements Expression {
         Object firstValue = firstExpression.evaluate(table, row);
         Object secondValue = secondExpression.evaluate(table, row);
 
-        Comparable<Object> first = (Comparable<Object>) firstValue;
-        Comparable<Object> second = (Comparable<Object>) secondValue;
+        Object first = firstValue;
+        Object second = secondValue;
 
         switch (operator) {
             case "==":
@@ -36,14 +36,16 @@ public class CompoundExpression implements Expression {
             case "!=":
                 return !first.equals(second);
             case ">":
-                return first.compareTo(second) > 0;
+                return ((Comparable<Object>)first).compareTo(second) > 0;
             case "<":
-                return first.compareTo(second) < 0;
+                return ((Comparable<Object>)first).compareTo(second) < 0;
             case ">=":
-                return first.compareTo(second) >= 0;
+                return ((Comparable<Object>)first).compareTo(second) >= 0;
             case "<=":
-                return first.compareTo(second) <= 0;
+                return ((Comparable<Object>)first).compareTo(second) <= 0;
             case "LIKE":
+                boolean x = ((String)first).indexOf((String)second) != -1;
+                return x;
             default:
                 throw new RuntimeException("Unknown comparator '" + operator + "'");
         }
