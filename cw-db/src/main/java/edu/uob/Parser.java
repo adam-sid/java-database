@@ -6,6 +6,7 @@ import edu.uob.expression.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -94,36 +95,24 @@ public class Parser {
     private Command parseUpdate(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
         String tableName = parsePlainText(tokenArr, tokenIndex);
         parseString(tokenArr, tokenIndex, "SET");
-        String attributeName;
-        String value;
-        String nextToken = peekNextToken(tokenArr, tokenIndex);
-        if(nextToken.contains("=")) {
-            String[] parts = nextToken.split("=", 2); // Split into two parts only
-            attributeName = parts[0].trim();
-            value = parts[1].trim();
-            if(attributeName.isEmpty())
-                throw new RuntimeException("Expected attribute before =");
-            if(value.isEmpty()) {
-                getNextToken(tokenArr, tokenIndex);
-                value = parseValue(tokenArr, tokenIndex);
-            }
-        } else {
-            attributeName = parsePlainText(tokenArr, tokenIndex);
-            nextToken = getNextToken(tokenArr, tokenIndex);
-            if(nextToken.equals("=")) {
-                getNextToken(tokenArr, tokenIndex);
-                value = parseValue(tokenArr, tokenIndex);
-            } else if (nextToken.startsWith("=")) {
-                value = nextToken.substring(1).trim(); // Remove '=' and trim whitespace
-            } else {
-                throw new RuntimeException("Unexpected token: " + nextToken);
-            }
-        }
+        List<NameValuePair> nameValList = parseNameAttributeList(tokenArr, tokenIndex);
         parseString(tokenArr, tokenIndex, "WHERE");
         Expression condition = parseExpression(tokenArr, tokenIndex);
-        return new UpdateCommand(databaseContext, tableName, attributeName, value,
-                condition);
+        return new UpdateCommand(databaseContext, tableName, nameValList, condition);
     }
+
+    private List<NameValuePair> parseNameAttributeList(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+        List<NameValuePair> nameValList = new ArrayList<>();
+        do {
+            String name = getNextToken(tokenArr, tokenIndex);
+            parseString(tokenArr, tokenIndex, "=");
+            String value = parseValue(tokenArr, tokenIndex);
+            NameValuePair nameValPair = new NameValuePair(name, value);
+            nameValList.add(nameValPair);
+        } while (parseStringIfExists(tokenArr, tokenIndex, ","));
+        return nameValList;
+    }
+
 
     private Command parseAlter(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
         parseString(tokenArr, tokenIndex, "TABLE");
@@ -170,7 +159,6 @@ public class Parser {
 
     Expression parseExpression(List<String> tokenArr, AtomicInteger tokenIndex, boolean isFirstExpression) {
         String nextToken = getNextToken(tokenArr, tokenIndex);
-
         Expression firstExpression = null;
         if(BOOL_LITERAL.contains(nextToken)) {
             firstExpression = new LiteralExpression(Boolean.parseBoolean(nextToken));
@@ -395,6 +383,15 @@ public class Parser {
         if (!actualStr.equals(expectedStr)) {
             throw new RuntimeException("Expected '" + expectedStr + "' but got '" + actualStr + "'");
         }
+    }
+
+    private boolean parseStringIfExists(ArrayList<String> tokenArr, AtomicInteger tokenIndex, String expectedStr) {
+        String actualStr = peekNextToken(tokenArr, tokenIndex).toUpperCase();
+        if (actualStr.equals(expectedStr)) {
+            tokenIndex.incrementAndGet();
+            return true;
+        }
+        return false;
     }
 
     private Command parseUse(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {

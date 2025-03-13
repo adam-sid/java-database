@@ -1,9 +1,6 @@
 package edu.uob;
 
-import edu.uob.commands.Command;
-import edu.uob.commands.CreateDatabaseCommand;
-import edu.uob.commands.CreateTableCommand;
-import edu.uob.commands.UseDatabaseCommand;
+import edu.uob.commands.*;
 import edu.uob.expression.*;
 import org.junit.jupiter.api.Test;
 
@@ -76,7 +73,6 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        //parser.parse(BasicTokeniser.setup("SELECT * FROM selectTest;"));
         assertThrows(RuntimeException.class, () -> parser.parse(BasicTokeniser.setup("SELECT FROM selectTest;")));
     }
 

@@ -20,4 +20,9 @@ public class BasicTokeniserTest {
         assertEquals(List.of("id", "==", "4").toString(), tokens.toString());
     }
 
+    @Test
+    public void tokeniseSingleEquals() {
+        ArrayList<String> tokens = BasicTokeniser.setup("column = value");
+        assertEquals(List.of("column", "=", "value").toString(), tokens.toString());
+    }
 }
