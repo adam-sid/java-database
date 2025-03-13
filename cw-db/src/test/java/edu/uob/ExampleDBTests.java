@@ -63,9 +63,13 @@ public class ExampleDBTests {
         sendCommandToServer("USE " + randomName + ";");
         sendCommandToServer("CREATE TABLE marks (name, mark, pass);");
         sendCommandToServer("INSERT INTO marks VALUES ('Simon', 65, TRUE);");
-        String response = sendCommandToServer("SELECT id FROM marks WHERE name == 'Simon';");
-        assertTrue(response.contains("[OK]"));
+        sendCommandToServer("INSERT INTO marks VALUES ('Sion', 55, FALSE);");
+        String basicQuery = sendCommandToServer("SELECT id, name FROM marks;");
+        System.out.println(basicQuery);
+        String response = sendCommandToServer("SELECT * FROM marks WHERE name == 'Simon';");
         System.out.println(response);
+        assertTrue(response.contains("[OK]"));
+
         // Convert multi-lined responses into just a single line
         String singleLine = response.replace("\n"," ").trim();
         System.out.println(singleLine);

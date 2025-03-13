@@ -8,7 +8,7 @@ import java.util.List;
 
 public class AttributeExpression implements Expression{
 
-    private final String attributeName;
+    private String attributeName;
 
     public AttributeExpression(String attributeName) {
         this.attributeName = attributeName;
@@ -16,6 +16,10 @@ public class AttributeExpression implements Expression{
 
     public String getAttributeName() {
         return attributeName;
+    }
+
+    public void setAttributeName(String attributeName) {
+        this.attributeName = attributeName;
     }
 
     @Override

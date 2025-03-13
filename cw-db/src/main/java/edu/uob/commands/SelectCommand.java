@@ -48,19 +48,8 @@ public class SelectCommand implements Command {
     public List<String> execute() throws IOException {
         List<String> result = new ArrayList<>();
         List<String> columns = table.getColumns();
-        //which columns need returning?
         List<Integer> queryColumns = new ArrayList<>();
-        if(isWild){
-            attributes = (ArrayList<String>) columns;
-        }
-        for (String attribute : attributes) {
-            int colIndex = columns.indexOf(attribute);
-            if (colIndex == -1) {
-                throw new RuntimeException("Attribute " + attribute +
-                        " not found in table " + tableName);
-            }
-            queryColumns.add(colIndex);
-        }
+
         Map<Integer, Row> rows;
         if (whereClause == null) {
             rows = table.getRows();
@@ -72,6 +61,19 @@ public class SelectCommand implements Command {
                 }
             });
         }
+
+        if(isWild){
+            attributes = (ArrayList<String>) columns;
+        }
+        for (String attribute : attributes) {
+            int colIndex = columns.indexOf(attribute);
+            if (colIndex == -1) {
+                throw new RuntimeException("Attribute " + attribute +
+                        " not found in table " + tableName);
+            }
+            queryColumns.add(colIndex);
+        }
+
         result.add(  //add column data in order of appearance in query
             queryColumns.stream()
             .map(columns::get)

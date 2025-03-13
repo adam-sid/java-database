@@ -4,7 +4,6 @@ import edu.uob.commands.*;
 import edu.uob.expression.*;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -117,7 +116,11 @@ public class Parser {
         return new SelectCommand(databaseContext, tableName, isWild, attributeList, condition );
     }
 
-    Expression parseExpression(List<String> tokenArr, AtomicInteger tokenIndex) {
+    Expression parseExpression(List<String> tokenArr, AtomicInteger tokenIndex){
+        return parseExpression(tokenArr, tokenIndex, true);
+    }
+
+    Expression parseExpression(List<String> tokenArr, AtomicInteger tokenIndex, boolean isFirstExpression) {
         String nextToken = getNextToken(tokenArr, tokenIndex);
         Expression firstExpression = null;
         if(BOOL_LITERAL.contains(nextToken)) {
@@ -134,12 +137,14 @@ public class Parser {
         } else if (isAttribute(nextToken)) {
             firstExpression = new AttributeExpression(nextToken);
         }
-        //if there is a new comparator
-        nextToken = peekNextToken(tokenArr, tokenIndex);
-        if (COMPARATOR.contains(nextToken)) {
-            tokenIndex.getAndIncrement();
-            Expression secondExpression = parseExpression(tokenArr, tokenIndex);
-            return new ComparatorExpression(nextToken, firstExpression, secondExpression);
+        //process second expression (if there is one)
+        if (isFirstExpression) {
+            nextToken = peekNextToken(tokenArr, tokenIndex);
+            if (COMPARATOR.contains(nextToken) || BOOL_OPERATOR.contains(nextToken)) {
+                tokenIndex.getAndIncrement();
+                Expression secondExpression = parseExpression(tokenArr, tokenIndex, false);
+                return new CompoundExpression(nextToken, firstExpression, secondExpression);
+            }
         }
 
         if (firstExpression != null) {
@@ -253,7 +258,7 @@ public class Parser {
         return attributeList;
     }
 
-    private String parseValue(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+    public static String parseValue(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
         String value = getNextToken(tokenArr, tokenIndex);
         if (BOOL_LITERAL.contains(value.toUpperCase())) {
             return value; //if boolean literal
@@ -284,7 +289,7 @@ public class Parser {
         }
     }
 
-    private void parseIntOrFloat(String number) {
+    private static void parseIntOrFloat(String number) {
         boolean isFloat = number.contains(".");
         int i = 0;
         int dotCount = 0;
@@ -311,7 +316,7 @@ public class Parser {
 
     //String in tokenArr will be used for comparison if an override string isn't provided
     //This DOES NOT increment the tokenIndex
-    private void parseStringLiteral(String value) {
+    private static void parseStringLiteral(String value) {
         //TODO check if objects equals is effective here?
         //case if string is ""
         if (value.isEmpty()) {
@@ -323,7 +328,7 @@ public class Parser {
         }
     }
 
-    private void parseCharLiteral(char c) {
+    private static void parseCharLiteral(char c) {
         if (SYMBOL_LITERAL.contains(String.valueOf(c)) || Character.isWhitespace(c)) {
             return;
         }
@@ -352,7 +357,7 @@ public class Parser {
         return new CreateDatabaseCommand(databaseContext, databaseName);
     }
 
-    private static String parsePlainText(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
+    public static String parsePlainText(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
         String plainText = getNextToken(tokenArr, tokenIndex);
         if(SQL_KEYWORDS.contains(plainText.toUpperCase())) {
             throw new RuntimeException("SQL Keyword '" + plainText.toUpperCase() + "' is a reserved word");
