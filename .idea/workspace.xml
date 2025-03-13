@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5ab6ae01-3160-41da-a850-14f84341e250" name="Changes" comment="" />
+    <list default="true" id="5ab6ae01-3160-41da-a850-14f84341e250" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cw-db/src/main/java/edu/uob/DBServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/cw-db/src/main/java/edu/uob/DBServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cw-db/src/test/java/edu/uob/ExampleDBTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/cw-db/src/test/java/edu/uob/ExampleDBTests.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,6 +17,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "adam-sid"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/adam-sid/javaDB.git",
+    "accountId": "25df5b43-f86f-40a9-a66a-9abfeebd6e2c"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
 }</component>
@@ -24,9 +40,9 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "clean__branch",
+    "RunOnceActivity.git.unshallow": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/adams/Java work/database assignment/javaDB",
+    "last_opened_file_path": "C:/Users/adams/Java work/database assignment",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -52,6 +68,7 @@
       <option name="presentableId" value="Default" />
       <updated>1741899264597</updated>
       <workItem from="1741899265893" duration="301000" />
+      <workItem from="1741901602741" duration="508000" />
     </task>
     <servers />
   </component>

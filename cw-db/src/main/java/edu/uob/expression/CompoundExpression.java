@@ -14,7 +14,8 @@ public class CompoundExpression implements Expression {
         this.firstExpression = firstExpression;
         this.secondExpression = secondExpression;
     }
-
+    //not going to throw an exception so don't care about these warnings
+    @SuppressWarnings("unchecked")
     @Override
     public Object evaluate(Table table, Row row) {
         Object firstValue = firstExpression.evaluate(table, row);
