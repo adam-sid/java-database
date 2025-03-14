@@ -36,17 +36,36 @@ public class AlterCommandTest {
         databaseContext.setDatabaseName("Test");
         String tableName = "alterTest";
         AlterCommand command = new AlterCommand(databaseContext, tableName, "ADD", "newColumn");
-        assertDoesNotThrow(command :: execute);
+        assertDoesNotThrow(command::execute);
         SelectCommand selectCommand = new SelectCommand(databaseContext, tableName, true, null, null);
         List<String> response = selectCommand.execute();
         assertTrue(response.get(0).contains("newColumn"));
         assertTrue(response.get(1).contains("NULL"));
         AlterCommand dropCommand = new AlterCommand(databaseContext, tableName, "DROP", "newColumn");
-        assertDoesNotThrow(dropCommand :: execute);
+        assertDoesNotThrow(dropCommand::execute);
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row firstRow = table.getRow(1);
         assertFalse(firstRow.getRowData().contains("NULL"));
     }
 
-    //TODO check you cannot drop ID from table!
+    @Test
+    public void AlterEmptyTable() throws IOException {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        String tableName = "emptyAlterTable";
+        AlterCommand command1 = new AlterCommand(databaseContext, tableName, "ADD", "newColumn");
+        command1.execute();
+        SelectCommand selectCommand1 = new SelectCommand(databaseContext, tableName, true, null, null);
+        List<String> response1 = selectCommand1.execute();
+        assertEquals("id\tnewColumn", response1.get(0));
+        AlterCommand command2 = new AlterCommand(databaseContext, tableName, "DROP", "newColumn");
+        command2.execute();
+        SelectCommand selectCommand2 = new SelectCommand(databaseContext, tableName, true, null, null);
+        List<String> response2 = selectCommand2.execute();
+        assertEquals("id", response2.get(0));
+
+    }
+
+
+
 }

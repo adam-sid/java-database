@@ -1,0 +1,5 @@
+id	price	crustiness	isTasty
+1	4.50	very	TRUE
+2	4.80	quite	FALSE
+3	2.50	not very	FALSE
+4	10	Extremely	TRUE

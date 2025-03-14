@@ -179,9 +179,14 @@ public class Parser {
         //process second expression (if there is one)
         if (isFirstExpression) {
             nextToken = peekNextToken(tokenArr, tokenIndex);
-            if (COMPARATOR.contains(nextToken.toUpperCase()) || BOOL_OPERATOR.contains(nextToken.toUpperCase())) {
+            if (COMPARATOR.contains(nextToken.toUpperCase())) {
                 tokenIndex.getAndIncrement();
                 Expression secondExpression = parseExpression(tokenArr, tokenIndex, false);
+                return new CompoundExpression(nextToken.toUpperCase(), firstExpression, secondExpression);
+            } else if (BOOL_OPERATOR.contains(nextToken.toUpperCase())) {
+                tokenIndex.getAndIncrement();
+                // Recursively parse another full expression
+                Expression secondExpression = parseExpression(tokenArr, tokenIndex, true);
                 return new CompoundExpression(nextToken.toUpperCase(), firstExpression, secondExpression);
             }
         }

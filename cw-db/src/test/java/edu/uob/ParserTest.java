@@ -175,7 +175,7 @@ public class ParserTest {
         String tableName = "selectTable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "-1", "hello2"));
-        String expressionStr = "weirdness < 42;";
+        String expressionStr = "weirdness < 142;";
         Expression expression = parser.parseExpression(BasicTokeniser.setup(expressionStr), new AtomicInteger(0));
         assertTrue((boolean)expression.evaluate(table, row));
     }

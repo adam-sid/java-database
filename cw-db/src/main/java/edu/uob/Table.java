@@ -115,7 +115,7 @@ public class Table {
             }
         }
     }
-    //TODO: Is buffered writer being closed here??
+
     public void writeRowToFile(BufferedWriter bufferedWriter, Row row) throws IOException {
         String rowLine = rowToString(row);
         bufferedWriter.write(rowLine);
@@ -126,7 +126,7 @@ public class Table {
         Row row = getRow(rowID);
         row.modifyElement(columnIndex, value);
     }
-    //TODO make this a linked list for better performance?
+
     public void addRow(ArrayList<String> valueList) {
         valueList.add(0, String.valueOf(maxId));
         if (valueList.size() == getColumns().size()) {
@@ -161,7 +161,7 @@ public class Table {
     }
 
     public void addColumn(String attributeName) throws IOException {
-        if (columns == null){
+        if (columns == null || columns.isEmpty()){
             this.columns = new ArrayList<>();
             columns.add("id");
         }

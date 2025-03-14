@@ -115,4 +115,44 @@ public class SelectCommandTest {
         assertEquals("size\ttastiness", response.get(0));
         assertEquals("NULL\tvery", response.get(1));
     }
+
+    @Test
+    public void selectWithFloatCompareAnd() throws IOException {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        String tableName = "SOURDOUGH";
+        File file = new File(databaseContext.getDatabasesHome() + File.separator +
+                databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
+        assertTrue(file.exists());
+        String query = "SELECT * FROM sourdough WHERE (price<10) AND (price>3);";
+        Parser parser = new Parser(databaseContext);
+        Command command = parser.parse(BasicTokeniser.setup(query));
+        List<String> response = command.execute();
+        System.out.println(response.toString());
+        assertEquals(3, response.size());
+        assertEquals("id\tprice\tcrustiness\tisTasty", response.get(0));
+        assertEquals("1\t4.50\tvery\tTRUE", response.get(1));
+        assertEquals("2\t4.80\tquite\tFALSE", response.get(2));
+    }
+
+    @Test
+    public void selectWithFloatCompareOr() throws IOException {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        String tableName = "SOURDOUGH";
+        File file = new File(databaseContext.getDatabasesHome() + File.separator +
+                databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
+        assertTrue(file.exists());
+        String query = "SELECT * FROM sourdough WHERE (price<10) OR (price>3);";
+        Parser parser = new Parser(databaseContext);
+        Command command = parser.parse(BasicTokeniser.setup(query));
+        List<String> response = command.execute();
+        System.out.println(response.toString());
+        assertEquals(5, response.size());
+        assertEquals("id\tprice\tcrustiness\tisTasty", response.get(0));
+        assertEquals("1\t4.50\tvery\tTRUE", response.get(1));
+        assertEquals("2\t4.80\tquite\tFALSE", response.get(2));
+        assertEquals("3\t2.50\tnot very\tFALSE", response.get(3));
+        assertEquals("4\t10\tExtremely\tTRUE", response.get(4));
+    }
 }

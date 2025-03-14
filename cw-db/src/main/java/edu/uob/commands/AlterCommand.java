@@ -35,9 +35,19 @@ public class AlterCommand implements Command {
     @Override
     public List<String> execute() throws IOException {
         List<String> columns = table.getColumns();
+        if (columns == null || columns.isEmpty()) {
+            if (alterType.equals("ADD")) {
+                table.addColumn(attribute);
+                return List.of();
+            } else {
+                throw new RuntimeException("No columns to drop");
+            }
+        }
+
         List<String> lowerCaseColumns = columns.stream()
             .map(String::toLowerCase)
             .toList();
+
         String lowerAttribute = attribute.toLowerCase();
         if("ADD".equals(alterType)) {
             if (!lowerCaseColumns.contains(lowerAttribute)) {
