@@ -12,9 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Parser {
 
     private final DatabaseContext databaseContext;
-    //TODO get clarity on reserved words
-    //TODO how to handle NULLs
-    //TODO make increment/get functions
+
     private static final Set<String> SQL_KEYWORDS = Set.of(
         "USE", "CREATE", "DROP", "ALTER", "INSERT", "SELECT", "UPDATE", "DELETE", "JOIN",
         "DATABASE", "TABLE", "INTO", "VALUES", "FROM", "WHERE", "SET", "AND", "OR", "ON",
