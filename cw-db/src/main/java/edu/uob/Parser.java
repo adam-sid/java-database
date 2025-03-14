@@ -83,14 +83,14 @@ public class Parser {
 
     private Command parseDelete(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
         parseString(tokenArr, tokenIndex, "FROM");
-        String tableName = parsePlainText(tokenArr, tokenIndex);
+        String tableName = parsePlainText(tokenArr, tokenIndex).toLowerCase();
         parseString(tokenArr, tokenIndex, "WHERE");
         Expression condition = parseExpression(tokenArr, tokenIndex);
         return new DeleteCommand(databaseContext, tableName, condition);
     }
 
     private Command parseUpdate(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String tableName = parsePlainText(tokenArr, tokenIndex);
+        String tableName = parsePlainText(tokenArr, tokenIndex).toLowerCase();
         parseString(tokenArr, tokenIndex, "SET");
         List<NameValuePair> nameValList = parseNameAttributeList(tokenArr, tokenIndex);
         parseString(tokenArr, tokenIndex, "WHERE");
@@ -113,7 +113,7 @@ public class Parser {
 
     private Command parseAlter(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
         parseString(tokenArr, tokenIndex, "TABLE");
-        String tableName = parsePlainText(tokenArr, tokenIndex);
+        String tableName = parsePlainText(tokenArr, tokenIndex).toLowerCase();
         String alterType = parseAlterType(tokenArr, tokenIndex);
         String attribute = parsePlainText(tokenArr, tokenIndex);
         return new AlterCommand(databaseContext, tableName, alterType, attribute);
@@ -141,7 +141,7 @@ public class Parser {
             tokenIndex.incrementAndGet();
         }
         parseString(tokenArr, tokenIndex, "FROM");
-        String tableName = parsePlainText(tokenArr, tokenIndex);
+        String tableName = parsePlainText(tokenArr, tokenIndex).toLowerCase();
         Expression condition = null;
         if (peekNextToken(tokenArr, tokenIndex).equalsIgnoreCase("WHERE")) {
             parseString(tokenArr, tokenIndex, "WHERE");
@@ -212,10 +212,9 @@ public class Parser {
         return true;
     }
 
-    //TODO don't need databasename in the insert command as can be derived from database context
     private Command parseInsert(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
         parseString(tokenArr, tokenIndex, "INTO");
-        String tableName = parsePlainText(tokenArr, tokenIndex);
+        String tableName = parsePlainText(tokenArr, tokenIndex).toLowerCase();
         parseString(tokenArr, tokenIndex, "VALUES");
         parseString(tokenArr, tokenIndex, "(");
         ArrayList<String> valueList = parseList(tokenArr, tokenIndex, true);
@@ -245,12 +244,12 @@ public class Parser {
     }
 
     private Command parseDropTable(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String tableName = parsePlainText(tokenArr, tokenIndex);
+        String tableName = parsePlainText(tokenArr, tokenIndex).toLowerCase();
         return new DropTableCommand(databaseContext, tableName);
     }
 
     private Command parseDropDatabase(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String databaseName = parsePlainText(tokenArr, tokenIndex);
+        String databaseName = parsePlainText(tokenArr, tokenIndex).toLowerCase();
         return new DropDatabaseCommand(databaseContext, databaseName);
     }
 
@@ -277,7 +276,7 @@ public class Parser {
     }
 
     private Command parseCreateTable(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String tableName = parsePlainText(tokenArr, tokenIndex);
+        String tableName = parsePlainText(tokenArr, tokenIndex).toLowerCase();
         ArrayList<String> attributeList = null;
         if (peekNextToken(tokenArr, tokenIndex).equals("(")) {
             parseString(tokenArr, tokenIndex, "(");
@@ -397,12 +396,12 @@ public class Parser {
     }
 
     private Command parseUse(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String databaseName = parsePlainText(tokenArr, tokenIndex);
+        String databaseName = parsePlainText(tokenArr, tokenIndex).toLowerCase();
         return new UseDatabaseCommand(databaseContext, databaseName);
     }
 
     private Command parseCreateDatabase(ArrayList<String> tokenArr, AtomicInteger tokenIndex) {
-        String databaseName = parsePlainText(tokenArr, tokenIndex);
+        String databaseName = parsePlainText(tokenArr, tokenIndex).toLowerCase();
         return new CreateDatabaseCommand(databaseContext, databaseName);
     }
 

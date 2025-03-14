@@ -17,7 +17,7 @@ public class DatabaseContext {
     }
 
     public void setDatabaseName(String databaseName) {
-        this.databaseName = databaseName;
+        this.databaseName = databaseName.toLowerCase();
     }
 
     public String getDatabaseName() {

@@ -166,7 +166,6 @@ public class Table {
             columns.add("id");
         }
         columns.add(attributeName);
-        //TODO aim for consistency with NULL vs tab
         rows.values().forEach(row -> row.addElement("NULL"));
         writeToFile();
     }

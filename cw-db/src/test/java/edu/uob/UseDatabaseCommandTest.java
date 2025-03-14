@@ -29,7 +29,7 @@ public class UseDatabaseCommandTest {
         databaseContext.setDatabaseName(databaseName);
         UseDatabaseCommand command = new UseDatabaseCommand(databaseContext, databaseName);
         command.execute();
-        assertEquals("UseDatabaseCommandTest", databaseContext.getDatabaseName());
+        assertEquals("usedatabasecommandtest", databaseContext.getDatabaseName());
         databaseFolder.delete();
     }
 
