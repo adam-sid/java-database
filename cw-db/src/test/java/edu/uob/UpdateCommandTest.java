@@ -17,7 +17,7 @@ public class UpdateCommandTest {
     public void updateCommand() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "updateTable";
+        String tableName = "updatetable";
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                 databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());
@@ -39,7 +39,7 @@ public class UpdateCommandTest {
     public void updateCommandMultipleNameValuePair() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "updateTable";
+        String tableName = "updatetable";
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                 databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());

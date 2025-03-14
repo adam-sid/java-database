@@ -22,13 +22,13 @@ public class DropTableCommandTest {
 
     @Test
     public void testExecute() throws IOException {
-        String tableName = "dropTableCommandTest";
+        String tableName = "droptablecommandtest";
         File table = new File(".." + File.separator + "testDatabases" + File.separator +
                 "Test", tableName + ".tab");
         table.createNewFile();
         assertTrue(table.exists());
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
-        databaseContext.setDatabaseName("Test");
+        databaseContext.setDatabaseName("test");
         DropTableCommand command = new DropTableCommand(databaseContext, tableName);
         command.execute();
         assertFalse(table.exists());
@@ -36,15 +36,15 @@ public class DropTableCommandTest {
 
     @Test
     public void testExecuteDoesNotExist() throws IOException {
-        String tableName = "DoesNotExist";
+        String tableName = "doesnotexist";
         File table = new File(".." + File.separator + "testDatabases" + File.separator +
-                "Test", tableName + ".tab");
+                "test", tableName + ".tab");
         table.createNewFile();
         assertTrue(table.exists());
         table.delete();
         assertFalse(table.exists());
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
-        databaseContext.setDatabaseName("Test");
+        databaseContext.setDatabaseName("test");
         DropTableCommand command = new DropTableCommand(databaseContext, tableName);
         assertThrows(RuntimeException.class, command::execute);
     }

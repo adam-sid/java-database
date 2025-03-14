@@ -17,19 +17,19 @@ public class CreateTableCommandTest {
         String databaseName = "CreateDatabaseCommandTest";
         String tableName = "CreateTableCommandTest";
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
-        CreateTableCommand command = new CreateTableCommand(databaseContext, databaseName, tableName, null);
-        assertEquals(tableName, command.getTableName());
+        CreateTableCommand command = new CreateTableCommand(databaseContext, databaseName.toLowerCase(), tableName.toLowerCase(), null);
+        assertEquals(tableName.toLowerCase(), command.getTableName());
     }
 
     @Test
     public void testExecuteAndDeleteCommand() {
         String tableName = "tableTest";
-        File table = new File(".." + File.separator + "testDatabases" + File.separator + "Test", tableName + ".tab");
+        File table = new File(".." + File.separator + "testDatabases" + File.separator + "Test", tableName.toLowerCase() + ".tab");
         table.delete();
         assertFalse(table.exists());
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
 
-        CreateTableCommand command = new CreateTableCommand(databaseContext, "Test", tableName, null);
+        CreateTableCommand command = new CreateTableCommand(databaseContext, "test", tableName, null);
         command.execute();
 
         assertTrue(table.exists());
@@ -41,17 +41,17 @@ public class CreateTableCommandTest {
 
     @Test
     public void testTableWithAttributes() {
-        String tableName = "tableTest";
+        String tableName = "tabletest";
         ArrayList<String> attributeList = new ArrayList<String>();
         attributeList.add("name");
         attributeList.add("age");
 
-        File table = new File(".." + File.separator + "testDatabases" + File.separator + "Test", tableName + ".tab");
+        File table = new File(".." + File.separator + "testDatabases" + File.separator + "test", tableName + ".tab");
         table.delete();
         assertFalse(table.exists());
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
 
-        CreateTableCommand command = new CreateTableCommand(databaseContext, "Test", tableName, attributeList);
+        CreateTableCommand command = new CreateTableCommand(databaseContext, "test", tableName, attributeList);
         command.execute();
 
         assertTrue(table.exists());

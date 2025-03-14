@@ -17,8 +17,8 @@ public class AlterCommandTest {
     @Test
     public void InsertSetup() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
-        databaseContext.setDatabaseName("Test");
-        String tableName = "alterTest";
+        databaseContext.setDatabaseName("test");
+        String tableName = "altertest";
         Table beforeTable = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         int rowsAmount = beforeTable.getRows().size();
         ArrayList<String> attributes = new ArrayList<>();
@@ -33,8 +33,8 @@ public class AlterCommandTest {
     @Test
     public void AddDropTest() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
-        databaseContext.setDatabaseName("Test");
-        String tableName = "alterTest";
+        databaseContext.setDatabaseName("test");
+        String tableName = "altertest";
         AlterCommand command = new AlterCommand(databaseContext, tableName, "ADD", "newColumn");
         assertDoesNotThrow(command::execute);
         SelectCommand selectCommand = new SelectCommand(databaseContext, tableName, true, null, null);
@@ -51,8 +51,8 @@ public class AlterCommandTest {
     @Test
     public void AlterEmptyTable() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
-        databaseContext.setDatabaseName("Test");
-        String tableName = "emptyAlterTable";
+        databaseContext.setDatabaseName("test");
+        String tableName = "emptyaltertable";
         AlterCommand command1 = new AlterCommand(databaseContext, tableName, "ADD", "newColumn");
         command1.execute();
         SelectCommand selectCommand1 = new SelectCommand(databaseContext, tableName, true, null, null);

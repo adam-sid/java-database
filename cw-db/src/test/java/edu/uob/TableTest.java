@@ -15,7 +15,7 @@ public class TableTest {
 
     @Test
     public void tableCreation() {
-        String tableName = "new table";
+        String tableName = "newtable";
         List<String> columnNames = List.of("id", "name", "email");
         Table table = new Table(databaseContext, databaseName, tableName, columnNames);
         assertEquals(tableName, table.getTableName());
@@ -24,16 +24,16 @@ public class TableTest {
     //TODO modify/remove these tests before submission - no pre-existing files!
     @Test
     public void tableDerivesColumnsFromFile() throws IOException {
-        Table table = new Table( databaseContext, databaseName, "tableWithNoRows");
-        assertEquals("tableWithNoRows", table.getTableName());
+        Table table = new Table( databaseContext, databaseName, "tablewithnoRows");
+        assertEquals("tablewithnoRows", table.getTableName());
         List<String> columnNames = List.of("id", "Name", "Age", "Email");
         assertEquals(columnNames, table.getColumns());
     }
 
     @Test
     public void tableLoadsRowsFromFile() throws IOException {
-        Table table = new Table( databaseContext, databaseName, "tableWithRows");
-        assertEquals("tableWithRows", table.getTableName());
+        Table table = new Table( databaseContext, databaseName, "tablewithrows");
+        assertEquals("tablewithrows", table.getTableName());
         assertEquals(3, table.getRows().size());
         List<String> secondRow = table.getRow(2).getRowData();
         assertEquals("Harry", secondRow.get(1));
@@ -44,14 +44,14 @@ public class TableTest {
         String value = ExampleDBTests.generateRandomName();
         int row = 3, column = 1;
         //read the table
-        Table table1 = new Table( databaseContext, databaseName, "tableToBeWritten");
+        Table table1 = new Table( databaseContext, databaseName, "tabletobewritten");
         //modify data
         table1.modifyRowData(row, column, value);
         //writing table to same file
         table1.writeToFile();
 
         //read and test file
-        Table table2 = new Table( databaseContext, databaseName, "tableToBeWritten");
+        Table table2 = new Table( databaseContext, databaseName, "tabletobewritten");
         List<String> secondRow = table2.getRow(row).getRowData();
         assertEquals(value, secondRow.get(column));
     }

@@ -21,7 +21,7 @@ public class SelectCommandTest {
     public void testSelectWildcard() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         File file = new File(databaseContext.getDatabasesHome() + File.separator + databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());
         SelectCommand command = new SelectCommand(databaseContext, tableName, true, null, null);
@@ -32,7 +32,7 @@ public class SelectCommandTest {
     public void testSelectSingleAttribute() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         File file = new File(databaseContext.getDatabasesHome() + File.separator + databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());
         ArrayList<String> attributes = new ArrayList<>();
@@ -48,7 +48,7 @@ public class SelectCommandTest {
     public void testSelectWithWhere() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                 databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());
@@ -67,7 +67,7 @@ public class SelectCommandTest {
     public void testSelectWithWhereAndAttributes() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                 databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());
@@ -86,7 +86,7 @@ public class SelectCommandTest {
     public void selectWithStringCompare() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "prawnsTest";
+        String tableName = "prawnstest";
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                 databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());
@@ -103,7 +103,7 @@ public class SelectCommandTest {
     public void selectWithLike() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "prawnsTest";
+        String tableName = "prawnstest";
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                 databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());
@@ -120,7 +120,7 @@ public class SelectCommandTest {
     public void selectWithFloatCompareAnd() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "SOURDOUGH";
+        String tableName = "sourdough";
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                 databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());
@@ -138,7 +138,7 @@ public class SelectCommandTest {
     public void selectWithFloatCompareOr() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "SOURDOUGH";
+        String tableName = "sourdough";
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                 databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());
@@ -158,7 +158,7 @@ public class SelectCommandTest {
     public void selectWithStringCompareLessThan() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "SOURDOUGH";
+        String tableName = "sourdough";
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                 databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());
@@ -173,7 +173,7 @@ public class SelectCommandTest {
     public void selectWithStringIntCompare() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "SOURDOUGH";
+        String tableName = "sourdough";
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                 databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());
@@ -188,7 +188,7 @@ public class SelectCommandTest {
     public void selectWithBadFloat() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "SOURDOUGH";
+        String tableName = "sourdough";
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                 databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());

@@ -15,15 +15,15 @@ public class UseDatabaseCommandTest {
     public void useDatabaseCommand() {
         String databaseName = "UseDatabaseCommandTest";
         DatabaseContext databaseContext = new DatabaseContext("..");
-        UseDatabaseCommand command = new UseDatabaseCommand(databaseContext, databaseName);
+        UseDatabaseCommand command = new UseDatabaseCommand(databaseContext, databaseName.toLowerCase());
         databaseContext.setDatabaseName(databaseName);
-        assertEquals(databaseName, command.getDatabaseName());
+        assertEquals(databaseName.toLowerCase(), command.getDatabaseName());
     }
 
     @Test
     public void testExecute() {
         String databaseName = "UseDatabaseCommandTest";
-        File databaseFolder = new File(".." + File.separator + "testDatabases" + File.separator + databaseName);
+        File databaseFolder = new File(".." + File.separator + "testDatabases" + File.separator + databaseName.toLowerCase());
         databaseFolder.mkdirs();
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName(databaseName);
@@ -35,7 +35,7 @@ public class UseDatabaseCommandTest {
 
     @Test
     public void testExecuteDoesNotExist() {
-        String databaseName = "DoesNotExist";
+        String databaseName = "doesnotexist";
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName(databaseName);
         UseDatabaseCommand command = new UseDatabaseCommand(databaseContext, databaseName);

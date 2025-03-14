@@ -17,7 +17,7 @@ public class DeleteCommandTest {
     public void deleteCommand() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "deleteTable";
+        String tableName = "deletetable";
         File file = new File(databaseContext.getDatabasesHome() + File.separator +
                 databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         assertTrue(file.exists());

@@ -19,8 +19,8 @@ public class InsertCommandTest {
     @Test
     public void testInsertCommand() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
-        databaseContext.setDatabaseName("Test");
-        String tableName = "insertedTable";
+        databaseContext.setDatabaseName("test");
+        String tableName = "insertedtable";
         File file = new File(databaseContext.getDatabasesHome() + File.separator + databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
         if (file.exists()) {
             file.delete();
@@ -58,8 +58,8 @@ public class InsertCommandTest {
     @Test
     public void tooMuchData() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
-        databaseContext.setDatabaseName("Test");
-        String tableName = "insertTest";
+        databaseContext.setDatabaseName("test");
+        String tableName = "inserttest";
         ArrayList<String> values = new ArrayList<>();
         values.add("value1");
         values.add("value2");
@@ -72,8 +72,8 @@ public class InsertCommandTest {
     @Test
     public void tooLittleData() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
-        databaseContext.setDatabaseName("Test");
-        String tableName = "insertTest";
+        databaseContext.setDatabaseName("test");
+        String tableName = "inserttest";
         ArrayList<String> values = new ArrayList<>();
         values.add("value1");
         values.add("value2");
@@ -84,8 +84,8 @@ public class InsertCommandTest {
     @Test
     public void insertWithNoAttributes() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
-        databaseContext.setDatabaseName("Test");
-        String tableName = "emptyTable";
+        databaseContext.setDatabaseName("test");
+        String tableName = "emptytable";
         ArrayList<String> values = new ArrayList<>();
         values.add("value1");
         values.add("value2");

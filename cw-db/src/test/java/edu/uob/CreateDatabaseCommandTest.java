@@ -11,14 +11,14 @@ public class CreateDatabaseCommandTest {
     @Test
     public void constructCommand() {
         String databaseName = "CreateDatabaseCommandTest";
-        CreateDatabaseCommand command = new CreateDatabaseCommand(null, databaseName);
-        assertEquals(databaseName, command.getDatabaseName());
+        CreateDatabaseCommand command = new CreateDatabaseCommand(null, databaseName.toLowerCase());
+        assertEquals(databaseName.toLowerCase(), command.getDatabaseName());
     }
 
     @Test
     public void testExecuteAndDeleteCommand() {
         String databaseName = "CreateDatabaseCommandTest";
-        File databaseFolder = new File(".." + File.separator + "testDatabases" + File.separator + databaseName);
+        File databaseFolder = new File(".." + File.separator + "testDatabases" + File.separator + databaseName.toLowerCase());
         databaseFolder.delete();
         assertFalse(databaseFolder.exists());
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");

@@ -31,7 +31,6 @@ public class ParserTest {
     public void createDatabaseWithInvalidName() {
         DatabaseContext databaseContext = new DatabaseContext("..");
         Parser parser = new Parser(databaseContext);
-        //TODO verify content of exception
         assertThrows(RuntimeException.class, () -> parser.parse(BasicTokeniser.setup("CREATE DATABASE m@rkbook;")));
     }
 
@@ -91,7 +90,7 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
         String expressionStr = "(weirdness == 42);";
@@ -103,7 +102,7 @@ public class ParserTest {
     public void parseVariable() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         Parser parser = new Parser(databaseContext);
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         String expressionStr = "weirdness;";
@@ -112,13 +111,13 @@ public class ParserTest {
         assertEquals("weirdness", expression.getAttributeName());
         assertEquals("C", expression.evaluate(table, new Row(0, List.of("A", "B", "C"))));
     }
-    //TODO make name==123; work same as name == 123;
+
     @Test
     public void parseIntegerExpression() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
         String expressionStr = "weirdness == 42;";
@@ -130,7 +129,7 @@ public class ParserTest {
     public void parseVariableWhereVariableIsId() throws IOException {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         Parser parser = new Parser(databaseContext);
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         String expressionStr = "id;";
@@ -146,7 +145,7 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
         String expressionStr = "weirdness != 42;";
@@ -159,7 +158,7 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "43", "hello2"));
         String expressionStr = "weirdness > 42;";
@@ -172,7 +171,7 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "-1", "hello2"));
         String expressionStr = "weirdness < 142;";
@@ -185,7 +184,7 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
         String expressionStr = "weirdness <= 42;";
@@ -198,7 +197,7 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
         String expressionStr = "description like 'ing';";
@@ -211,7 +210,7 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
         String expressionStr = "(description like 'ing') AND (id == 5);";
@@ -224,7 +223,7 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
         String expressionStr = "(description like 'ing') AND (id == 4);";
@@ -237,7 +236,7 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
         String expressionStr = "(description like 'ing') AND (id==5);";
@@ -250,7 +249,7 @@ public class ParserTest {
         DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
         databaseContext.setDatabaseName("Test");
         Parser parser = new Parser(databaseContext);
-        String tableName = "selectTable";
+        String tableName = "selecttable";
         Table table = new Table(databaseContext, databaseContext.getDatabaseName(), tableName);
         Row row = new Row(5, List.of("5", "stringValue2", "42", "hello2"));
         String expressionStr = "(description like 'ing') AND (id==45);";
