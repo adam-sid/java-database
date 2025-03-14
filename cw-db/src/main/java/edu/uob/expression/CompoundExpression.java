@@ -32,8 +32,10 @@ public class CompoundExpression implements Expression {
     private int compareExpression(Double num1, Double num2, Object firstValue, Object secondValue) {
         if(num1 != null && num2 != null) {
             return Double.compare(num1, num2);
+        } else if (firstValue instanceof String && secondValue instanceof String) {
+            return ((String) firstValue).compareTo((String) secondValue);
         } else {
-            return ((Comparable<Object>) firstValue).compareTo(secondValue);
+            return 1;
         }
     }
 

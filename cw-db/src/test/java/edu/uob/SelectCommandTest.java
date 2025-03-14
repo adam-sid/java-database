@@ -128,7 +128,6 @@ public class SelectCommandTest {
         Parser parser = new Parser(databaseContext);
         Command command = parser.parse(BasicTokeniser.setup(query));
         List<String> response = command.execute();
-        System.out.println(response.toString());
         assertEquals(3, response.size());
         assertEquals("id\tprice\tcrustiness\tisTasty", response.get(0));
         assertEquals("1\t4.50\tvery\tTRUE", response.get(1));
@@ -147,12 +146,57 @@ public class SelectCommandTest {
         Parser parser = new Parser(databaseContext);
         Command command = parser.parse(BasicTokeniser.setup(query));
         List<String> response = command.execute();
-        System.out.println(response.toString());
         assertEquals(5, response.size());
         assertEquals("id\tprice\tcrustiness\tisTasty", response.get(0));
         assertEquals("1\t4.50\tvery\tTRUE", response.get(1));
         assertEquals("2\t4.80\tquite\tFALSE", response.get(2));
         assertEquals("3\t2.50\tnot very\tFALSE", response.get(3));
         assertEquals("4\t10\tExtremely\tTRUE", response.get(4));
+    }
+
+    @Test
+    public void selectWithStringCompareLessThan() throws IOException {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        String tableName = "SOURDOUGH";
+        File file = new File(databaseContext.getDatabasesHome() + File.separator +
+                databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
+        assertTrue(file.exists());
+        String query = "SELECT * FROM sourdough WHERE (crustiness<'very');";
+        Parser parser = new Parser(databaseContext);
+        Command command = parser.parse(BasicTokeniser.setup(query));
+        List<String> response = command.execute();
+        assertEquals(4, response.size());
+    }
+
+    @Test
+    public void selectWithStringIntCompare() throws IOException {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        String tableName = "SOURDOUGH";
+        File file = new File(databaseContext.getDatabasesHome() + File.separator +
+                databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
+        assertTrue(file.exists());
+        String query = "SELECT * FROM sourdough WHERE (crustiness<12);";
+        Parser parser = new Parser(databaseContext);
+        Command command = parser.parse(BasicTokeniser.setup(query));
+        List<String> response = command.execute();
+        assertEquals(1, response.size());
+    }
+
+    @Test
+    public void selectWithBadFloat() throws IOException {
+        DatabaseContext databaseContext = new DatabaseContext(".." + File.separator + "testDatabases");
+        databaseContext.setDatabaseName("Test");
+        String tableName = "SOURDOUGH";
+        File file = new File(databaseContext.getDatabasesHome() + File.separator +
+                databaseContext.getDatabaseName() + File.separator + tableName + ".tab");
+        assertTrue(file.exists());
+        String query = "SELECT * FROM sourdough WHERE (price<12.2.2);";
+        Parser parser = new Parser(databaseContext);
+        Command command = parser.parse(BasicTokeniser.setup(query));
+        List<String> response = command.execute();
+        assertEquals(2, response.size());
+        assertEquals("4\t10\tExtremely\tTRUE", response.get(1));
     }
 }

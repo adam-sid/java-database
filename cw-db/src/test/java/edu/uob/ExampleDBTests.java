@@ -48,7 +48,6 @@ public class ExampleDBTests {
         String response = sendCommandToServer("SELECT * FROM marks;");
         assertTrue(response.contains("[OK]"), "A valid query was made, however an [OK] tag was not returned");
         assertFalse(response.contains("[ERROR]"), "A valid query was made, however an [ERROR] tag was returned");
-        System.out.println(response);
         assertTrue(response.contains("Simon"), "An attempt was made to add Simon to the table, but they were not returned by SELECT *");
         assertTrue(response.contains("Chris"), "An attempt was made to add Chris to the table, but they were not returned by SELECT *");
     }
@@ -67,7 +66,6 @@ public class ExampleDBTests {
 //        String basicQuery = sendCommandToServer("SELECT id, name FROM marks;");
 //        System.out.println(basicQuery);
         String response = sendCommandToServer("SELECT id FROM marks WHERE name == 'Simon';");
-        System.out.println(response);
         assertTrue(response.contains("[OK]"));
         assertFalse(response.contains("2"));
         // Convert multi-lined responses into just a single line
@@ -76,7 +74,6 @@ public class ExampleDBTests {
         String[] tokens = singleLine.split(" ");
         // Check that the very last token is a number (which should be the ID of the entry)
         String lastToken = tokens[tokens.length-1];
-        System.out.println(lastToken);
         try {
             Integer.parseInt(lastToken);
         } catch (NumberFormatException nfe) {
@@ -96,7 +93,6 @@ public class ExampleDBTests {
         server = new DBServer();
         sendCommandToServer("USE " + randomName + ";");
         String response = sendCommandToServer("SELECT * FROM marks;");
-        System.out.println(response);
         assertTrue(response.contains("Simon"), "Simon was added to a table and the server restarted - but Simon was not returned by SELECT *");
     }
 
@@ -109,7 +105,6 @@ public class ExampleDBTests {
         sendCommandToServer("CREATE TABLE marks (name, mark, pass);");
         sendCommandToServer("INSERT INTO marks VALUES ('Simon', 65, TRUE);");
         String response = sendCommandToServer("SELECT * FROM libraryfines;");
-        System.out.println(response);
         assertTrue(response.contains("[ERROR]"), "An attempt was made to access a non-existent table, however an [ERROR] tag was not returned");
         assertFalse(response.contains("[OK]"), "An attempt was made to access a non-existent table, however an [OK] tag was returned");
     }
