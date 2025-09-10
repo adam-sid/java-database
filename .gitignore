@@ -1,7 +1,8 @@
 .idea/
 .DS_Store
 .~lock.example-transcript.docx#
-testDatabases/
 people.tab
 sheds.tab
 ~$ample-transcript.docx
+example-transcript.docx
+/target
