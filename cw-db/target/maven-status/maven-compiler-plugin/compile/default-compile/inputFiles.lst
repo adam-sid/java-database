@@ -1,2 +1,24 @@
-/Users/sl17668/Documents/Work/Teaching/Units/JAV/2025/JavaWorkbookDevelopment/Weekly Workbooks/07 DB assignment/resources/cw-db/src/main/java/edu/uob/DBServer.java
-/Users/sl17668/Documents/Work/Teaching/Units/JAV/2025/JavaWorkbookDevelopment/Weekly Workbooks/07 DB assignment/resources/cw-db/src/main/java/edu/uob/DBClient.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/commands/CreateDatabaseCommand.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/commands/CreateTableCommand.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/NameValuePair.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/expression/Expression.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/expression/AttributeExpression.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/commands/InsertCommand.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/DBClient.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/Row.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/commands/DropDatabaseCommand.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/Util.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/commands/Command.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/BasicTokeniser.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/Table.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/DatabaseContext.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/commands/DeleteCommand.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/commands/SelectCommand.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/commands/UpdateCommand.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/commands/DropTableCommand.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/commands/AlterCommand.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/Parser.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/DBServer.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/commands/UseDatabaseCommand.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/expression/LiteralExpression.java
+/Users/adam-sid/Documents/projects/java-database/cw-db/src/main/java/edu/uob/expression/CompoundExpression.java
