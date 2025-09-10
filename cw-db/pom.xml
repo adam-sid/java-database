@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>cw-db</artifactId>
@@ -17,10 +17,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.failOnWarning>false</maven.compiler.failOnWarning>
-
-        <!-- Path to the databases folder to be cleared after run.
-             Adjust if your layout is different. -->
-        <databases.dir>${project.basedir}/cw-db/databases</databases.dir>
     </properties>
 
     <dependencies>
@@ -96,32 +92,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- Antrun plugin to clear the databases directory after the run -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>clear-databases-dir</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <echo>Clearing databases directory: ${databases.dir}</echo>
-                                <!-- delete all files and subfolders inside databases.dir but keep the top folder -->
-                                <delete>
-                                    <fileset dir="${databases.dir}" includes="**/*"/>
-                                </delete>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
         </plugins>
     </build>
 
